@@ -1,0 +1,52 @@
+# Blender MTL File: 'None'
+# Material Count: 5
+
+newmtl PlyKirby5KEyeYellow_1_tga
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.409600 0.409600 0.409600
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd PlyKirby5KEyeYellow.1.png
+
+newmtl PlyKirby5KEye_1_tga
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.409600 0.409600 0.409600
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd PlyKirby5KEye.1.png
+
+newmtl PlyKirby5KFoot_tga
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.409600 0.409600 0.409600
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd PlyKirby5KFoot.png
+
+newmtl PlyKirby5KMouth_tga
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.409600 0.409600 0.409600
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd PlyKirby5KMouth.png
+
+newmtl PlyKirby5KSkin_tga
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.409600 0.409600 0.409600
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd PlyKirby5KSkin.png
