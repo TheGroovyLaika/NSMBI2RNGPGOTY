@@ -2,11 +2,12 @@
 
 #include <irrlicht.h>
 
-#include "events.h"
-#include "jump.h"
-#include "collision.h"
-#include "entities.h"
-#include "player_state.h"
+#include "actions/events.h"
+#include "actions/jump.h"
+#include "actions/collision.h"
+#include "level/entities.h"
+#include "level/player_state.h"
+#include "level/level_creator.h"
 
 #include <iostream>
 #include <time.h>
@@ -33,6 +34,8 @@ int main()
   //classe gérant le gameover
   Player_state player_state = Player_state();
 
+  //Level Creator
+  Level_Creator level_creator = Level_Creator();
 
   std::vector<iv::ITexture*> textures;
 
@@ -46,143 +49,93 @@ int main()
   ig::IGUIEnvironment *gui  = device->getGUIEnvironment();
 
 
+  int position_nb[5] = {6, 10, 8, 5, 25};
+  std::vector<ic::vector3df> position_data = {ic::vector3df(2200, 50, 0), 
+                                              ic::vector3df(2400, 50, 0), 
+                                              ic::vector3df(2600, 50, 0),
+                                              ic::vector3df(2800, 50, 0), 
+                                              ic::vector3df(3000, 50, 0), 
+                                              ic::vector3df(5300, 50, 0),
+                                              ic::vector3df(3690, 50, 0),  
+                                              ic::vector3df(3770, 150, 0), 
+                                              ic::vector3df(3850, 250, 0), 
+                                              ic::vector3df(4500, 200, 0), 
+                                              ic::vector3df(5370, 150, 0), 
+                                              ic::vector3df(5480, 250, 0),
+                                              ic::vector3df(6240, 450, 0), 
+                                              ic::vector3df(6350, 550, 0), 
+                                              ic::vector3df(7540, 50, 0),
+                                              ic::vector3df(7660, 125, 0),
+                                              ic::vector3df(400, 75, 0), 
+                                              ic::vector3df(4000, 325, 0),  
+                                              ic::vector3df(4300, 325, 0),
+                                              ic::vector3df(6460, 650, 0), 
+                                              ic::vector3df(5700, 650, 0),
+                                              ic::vector3df(4850, 375, 0),
+                                              ic::vector3df(6850, 50, 0), 
+                                              ic::vector3df(7880, 300, 0),
+                                              ic::vector3df(850, 150, 0), 
+                                              ic::vector3df(1530, 50, 0), 
+                                              ic::vector3df(5890, 350, 0),
+                                              ic::vector3df(6110, 750, 0), 
+                                              ic::vector3df(5290, 550, 0),
+                                              ic::vector3df(2100, 0, 0),
+                                              ic::vector3df(2300, 0, 0),
+                                              ic::vector3df(2500, 45, 0),
+                                              ic::vector3df(2700, 0, 0),
+                                              ic::vector3df(2900, 45, 0),
+                                              ic::vector3df(3100, 0, 0),
+                                              ic::vector3df(200, 0, 0),
+                                              ic::vector3df(500, 0, 0),
+                                              ic::vector3df(800, 0, 0),
+                                              ic::vector3df(1150, 0, 0),
+                                              ic::vector3df(1930, 50, 0),
+                                              ic::vector3df(3300, 50, 0),
+                                              ic::vector3df(3500, 45, 0),
+                                              ic::vector3df(4600, 230, 0),
+                                              ic::vector3df(4800, 0, 0),
+                                              ic::vector3df(5000, 45, 0),
+                                              ic::vector3df(5200, 0, 0),
+                                              ic::vector3df(5370, 45, 0),
+                                              ic::vector3df(5550, 260, 0),
+                                              ic::vector3df(6300, 450, 0),
+                                              ic::vector3df(6500, 750, 0),
+                                              ic::vector3df(5630, 570, 0),
+                                              ic::vector3df(6950, 80, 0),
+                                              ic::vector3df(7200, 20, 0),
+                                              ic::vector3df(7500, 20, 0),};
 
-  // tableau contenant 35 kirbies de la classe Kirbies
-  int nb_kirbies = 35;
-  Kirbies kirbies[nb_kirbies];
-
-  //tableau de position des kirbies
-  std::vector<ic::vector3df> kirbies_positions = {ic::vector3df(2100, 0, 0),
-                                                  ic::vector3df(2300, 0, 0),
-                                                  ic::vector3df(2500, 45, 0),
-                                                  ic::vector3df(2700, 0, 0),
-                                                  ic::vector3df(2900, 45, 0),
-                                                  ic::vector3df(3100, 0, 0),
-                                                  ic::vector3df(200, 0, 0),
-                                                  ic::vector3df(500, 0, 0),
-                                                  ic::vector3df(800, 0, 0),
-                                                  ic::vector3df(1150, 0, 0),
-                                                  ic::vector3df(1930, 50, 0),
-                                                  ic::vector3df(3300, 50, 0),
-                                                  ic::vector3df(3500, 45, 0),
-                                                  ic::vector3df(4600, 230, 0),
-                                                  ic::vector3df(4800, 0, 0),
-                                                  ic::vector3df(5000, 45, 0),
-                                                  ic::vector3df(5200, 0, 0),
-                                                  ic::vector3df(5370, 45, 0),
-                                                  ic::vector3df(5550, 260, 0),
-                                                  ic::vector3df(6300, 450, 0),
-                                                  ic::vector3df(6500, 750, 0),
-                                                  ic::vector3df(5630, 570, 0),
-                                                  ic::vector3df(6950, 80, 0),
-                                                  ic::vector3df(7200, 20, 0),
-                                                  ic::vector3df(7500, 20, 0)
-              };
-
-  //Generation d'une file indienne de kirbies
-  int pos_deb = 3780; 
-  int pos_fin = 4650;
-  while(pos_deb < pos_fin)
-  {
-     kirbies_positions.push_back(ic::vector3df(pos_deb, 0, 0));
-     pos_deb += 80;
-    
-  };
-  
-  // Chargement des kirbies
-  for(int k = 0; k < nb_kirbies; k++)
-  {
-    kirbies[k] = Kirbies();
-    kirbies[k].set_smgr(smgr);
-    kirbies[k].init(kirbies_positions[k], k + 5);
-  }
-
-  // Classe gérant les pièces
-  int nb_coins = 133;
-  Coins coins[nb_coins];
+  int nb_coins = position_nb[0] + position_nb[1] * 2 + position_nb[2] * 4 + position_nb[3] * 15;
   int coins_id = 0;
+  int nb_kirbies = position_nb[4];
 
+  Coins coins[nb_coins];
+  Kirbies kirbies[nb_kirbies];
+  Player player = Player();
+  
   // Chargement de notre personnage
   ic::vector3df position  = ic::vector3df(-30, 0, 0);
-  is::IAnimatedMesh *mesh = smgr->getMesh("data/tris.md2");
 
   // Attachement de notre personnage dans la scène
-  is::IAnimatedMeshSceneNode *node = smgr->addAnimatedMeshSceneNode(mesh);
-
-  node->setID(1);
-  node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-  node->setMD2Animation(irr::scene::EMAT_STAND);
   textures.push_back(driver->getTexture("data/blue_texture.pcx"));
   textures.push_back(driver->getTexture("data/ouch.png"));
   textures.push_back(driver->getTexture("data/godmode.png"));
+  player.set_smgr(smgr);
+  is::IAnimatedMeshSceneNode *node = player.init(position);
   node->setMaterialTexture(0, textures[0]);
-  node->setPosition(position);
-
-   // Fond
-  is::IAnimatedMesh *background = smgr->addHillPlaneMesh("background",
-                                                          ic::dimension2d<irr::f32>(2000,1000),
-                                                          ic::dimension2d<irr::u32>(10,1), 0, 0,
-                                                          ic::dimension2d<irr::f32>(0,0),
-                                                          ic::dimension2d<irr::f32>(10,1));
-
-  is::IAnimatedMeshSceneNode *node_background = smgr->addAnimatedMeshSceneNode(background);
-
-  node_background->setPosition(ic::vector3df(9000, 300, 500));
-  node_background->setRotation(ic::vector3df(-90,node_background->getRotation().Y, node_background->getRotation().Z));
-  node_background->setMaterialTexture( 0, driver->getTexture("data/background.png") );
-  node_background->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-
-
-  // Maison (decor)
-  irr::scene::IMeshSceneNode *house_node = smgr->addMeshSceneNode(smgr->getMesh("data/House/house.obj"),
-                                      0,
-                                      1000,
-                                      ic::vector3df(-90.0f, -60.0f, 30.0f),
-                                      ic::vector3df(0.0f, 90.0f, 0.0f),
-                                      ic::vector3df(3.0f, 3.0f,3.0f),
-                                      false);
-  house_node->setMaterialFlag(iv::EMF_LIGHTING, true);
-  house_node->setMaterialType(video::EMT_SOLID);
-
-  // Drapeau d'arrivee (decor)
-  irr::scene::IMeshSceneNode *flag_node = smgr->addMeshSceneNode(smgr->getMesh("data/Flag/flag.obj"),
-                                      0,
-                                      1001,
-                                      ic::vector3df(8080.0f, -30.0f, 30.0f),
-                                      ic::vector3df(0.0f, 0.0f, 0.0f),
-                                      ic::vector3df(3.0f, 3.0f,3.0f),
-                                      false);
-  flag_node->setMaterialFlag(iv::EMF_LIGHTING, false);
-  flag_node->setMaterialType(video::EMT_SOLID);
-
-  //Mesh correspondant aux arbres en fond
-  is::IAnimatedMesh *tree = smgr->addHillPlaneMesh("tree",
-                                                    ic::dimension2d<irr::f32>(100,120),
-                                                    ic::dimension2d<irr::u32>(1,1), 0, 0,
-                                                    ic::dimension2d<irr::f32>(0,0),
-                                                    ic::dimension2d<irr::f32>(1,1));
-
-  is::IAnimatedMeshSceneNode*  tree_nodes[42];
-
-  srand(time(NULL));
-
-  //Generation aleatoire des arbres
-  for(int i = 0; i < 42; i++)
-  {
-    tree_nodes[i] = smgr->addAnimatedMeshSceneNode(tree);
-
-    tree_nodes[i]->setPosition(ic::vector3df(0, 400, 1000));
-    tree_nodes[i]->setRotation(ic::vector3df(-90,tree_nodes[i]->getRotation().Y, tree_nodes[i]->getRotation().Z));
-    tree_nodes[i]->setMaterialTexture( 0, driver->getTexture("data/tree.png") );
-    tree_nodes[i]->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-    tree_nodes[i]->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-    tree_nodes[i]->setPosition(ic::vector3df(i*200, 20, rand()%300 + 200));
-  }
 
   // Initialisation de la camera
   ic::vector3df camera_position = ic::vector3df(30, 50, -200);
   ic::vector3df camera_target = ic::vector3df(0, 50, 0);
   is::ICameraSceneNode *camera = smgr->addCameraSceneNode(nullptr, camera_position, camera_target);
+
+  // Chargement du niveau
+  level_creator.set_smgr(smgr);                    
+  level_creator.set_driver(driver);                    
+  level_creator.set_coins(coins);                    
+  level_creator.set_kirbies(kirbies);                    
+  level_creator.load_level(position_nb, position_data);
+  level_creator.load_background();
 
   // Initialisation de la classe receiver
   receiver.set_node(node);
@@ -233,23 +186,7 @@ int main()
   ig::IGUIImage *start_game   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
   start_game->setScaleImage(true);
   start_game->setImage(driver->getTexture("data/start_game.png"));
-  
- // Gestion des briques/cubes
-  int n_cubes = 40;
-  is::ISceneNode* cubes[n_cubes];
-  int cube_id = 0; 
-  
-  // Generation des plateformes, 4 types :
-  //  - unit pour les petits cubes
-  //  - little pour les petites plateformes
-  //  - mean pour les moyennes plateformes
-  //  - big pour les grosses plateformes
-
-  ic::vector3df cube_unit(1.0f, 1.0f,1.0f);
-  ic::vector3df cube_little(3.0f, 1.0f,1.0f);
-  ic::vector3df cube_mean(8.0f, 1.0f,1.0f);
-  ic::vector3df cube_big(30.0f, 1.0f,1.0f);
-  
+    
   // Tableau des positions 
   std::vector<ic::vector3df> P_unit_c = {ic::vector3df(2200, 50, 0), ic::vector3df(2400, 50, 0), ic::vector3df(2600, 50, 0),
 					 ic::vector3df(2800, 50, 0), ic::vector3df(3000, 50, 0), ic::vector3df(5300, 50, 0)};
@@ -267,111 +204,7 @@ int main()
 					ic::vector3df(6110, 750, 0), ic::vector3df(5290, 550, 0)};
   
   iv::ITexture *brick = driver->getTexture("data/Brick.jpg");
-  
-  // Gestion des cubes unités
-  for(int j=0; j<6; j++)
-  {
-
-    cubes[cube_id] = smgr->addCubeSceneNode(30);
-    cubes[cube_id]->setPosition(P_unit_c[j]);
-    cubes[cube_id]->setScale(cube_unit);
-    cubes[cube_id]->setID(5 + nb_coins + nb_kirbies + cube_id);
-    cubes[cube_id]->setMaterialTexture(0, brick);
-    cube_id++;
-
-    // gestion des pièces
-    coins[coins_id] = Coins();
-    coins[coins_id].set_smgr(smgr);
-    ic::vector3df pos = P_unit_c[j];    
-    pos.Y += 100;
-    coins[coins_id].init(pos, coins_id + 5 + nb_kirbies);
-    coins_id++;
-  }
-  
-  
-  
-  irr::core::matrix4 mat_little;
-  mat_little.setTextureScale(3.0F,1.0F);
-
-  // Gestion des cubes little
-  for(int k=0; k<10; k++)
-  {
-    cubes[cube_id] = smgr->addCubeSceneNode(20);
-    cubes[cube_id]->setPosition(P_little_c[k]);
-    cubes[cube_id]->setScale(cube_little);
-    cubes[cube_id]->setID(5 + nb_coins + nb_kirbies + cube_id);
-    cubes[cube_id]->setMaterialTexture(0, brick);
-    cubes[cube_id]->getMaterial(0).setTextureMatrix(0,mat_little);
-    cube_id++;
     
-    // gestion des pièces
-    for(int p=0; p<2; p++)
-    {
-      coins[coins_id] = Coins();
-      coins[coins_id].set_smgr(smgr);
-      ic::vector3df pos = P_little_c[k]; 
-      pos.X = pos.X - 15 + p*30;
-      pos.Y += 20;
-      coins[coins_id].init(pos, coins_id + 5 + nb_kirbies);
-      coins_id++;
-    }
-  }
-  
-  irr::core::matrix4 mat_mean;
-  mat_mean.setTextureScale(8.0F,1.0F);
-  
-  // Gestion des cubes mean
-  for(int l=0; l<8; l++)
-  {
-    cubes[cube_id] = smgr->addCubeSceneNode(20);
-    cubes[cube_id]->setPosition(P_mean_c[l]);
-    cubes[cube_id]->setScale(cube_mean);
-    cubes[cube_id]->setID(5 + nb_coins + nb_kirbies + cube_id);
-    cubes[cube_id]->setMaterialTexture(0, brick);
-    cubes[cube_id]->getMaterial(0).setTextureMatrix(0,mat_mean);
-    cube_id++;  
-    
-    // gestion des pièces
-    for(int p=0; p<4; p++)
-    {
-      coins[coins_id] = Coins();
-      coins[coins_id].set_smgr(smgr);
-      ic::vector3df pos = P_mean_c[l]; 
-      pos.X = pos.X - 60 + p*40;
-      pos.Y += 20;
-      coins[coins_id].init(pos, coins_id + 5 + nb_kirbies);
-      coins_id++;
-    }
-  }
-  
-  
-  irr::core::matrix4 mat_big;
-  mat_big.setTextureScale(30.0F,1.0F);
-  
-  // Gestion des cubes big
-  for(int m=0; m<5; m++)
-  {
-    cubes[cube_id] = smgr->addCubeSceneNode(20);
-    cubes[cube_id]->setPosition(P_big_c[m]);
-    cubes[cube_id]->setScale(cube_big);
-    cubes[cube_id]->setID(5 + nb_coins + nb_kirbies + cube_id);
-    cubes[cube_id]->setMaterialTexture(0, brick);
-    cubes[cube_id]->getMaterial(0).setTextureMatrix(0,mat_big);
-    cube_id++;  
-    
-    // gestion des pièces
-    for(int p=0; p<15; p++)
-    {
-      coins[coins_id] = Coins();
-      coins[coins_id].set_smgr(smgr);
-      ic::vector3df pos = P_big_c[m]; 
-      pos.X = pos.X - 280 + p*40;
-      pos.Y += 20;
-      coins[coins_id].init(pos, coins_id + 5 + nb_kirbies);
-      coins_id++;
-    }
-  }
-  
 
   //Generation du sol
   irr::core::matrix4 mat;

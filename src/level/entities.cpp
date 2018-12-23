@@ -11,6 +11,45 @@ namespace ic = irr::core;
 namespace is = irr::scene;
 namespace iv = irr::video;
 
+/* ------------------ Player --------------------*/
+/**************************************************************************\
+ * Player::Player                                           *
+\**************************************************************************/
+Player::Player()
+  : smgr(nullptr), player_node(nullptr)
+{
+}
+
+
+/**************************************************************************\
+ * Player::set_smgr                                                *
+\**************************************************************************/
+void Player::set_smgr(irr::scene::ISceneManager *s)
+{
+  smgr = s;
+}
+
+/**************************************************************************\
+ * Player::init                                                *
+\**************************************************************************/
+is::IAnimatedMeshSceneNode* Player::init(ic::vector3df position)
+{
+  player_node = smgr->addAnimatedMeshSceneNode(smgr->getMesh("data/tris.md2"),
+                                               0,
+                                               1,
+                                               position,
+                                               ic::vector3df(0.0f, 0.0f, 0.0f),
+                                               ic::vector3df(1.0f, 1.0f,1.0f),
+                                               false);
+
+  player_node->setMaterialFlag(iv::EMF_LIGHTING, false);
+  player_node->setMD2Animation(irr::scene::EMAT_STAND);
+
+  return player_node;
+}
+
+
+
 /* ------------------ Kirbies --------------------*/
 /**************************************************************************\
  * Kirbies::Kirbies                                           *
@@ -52,9 +91,6 @@ void Kirbies::init(ic::vector3df pos, int id)
                                       ic::vector3df(3.0f, 3.0f,3.0f),
                                       false);
   kirby_node->setMaterialFlag(iv::EMF_LIGHTING, false);
-
-  kirby_node->setPosition(pos);
-  
 }
 
 /**************************************************************************\

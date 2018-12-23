@@ -7,6 +7,17 @@
 
 #include <irrlicht.h>
 
+class Player
+{
+  irr::scene::ISceneManager *smgr;
+  irr::scene::IAnimatedMeshSceneNode *player_node;
+
+public:
+  Player();
+  void set_smgr(irr::scene::ISceneManager *smgr);
+  irr::scene::IAnimatedMeshSceneNode* init(irr::core::vector3df position);
+};
+
 class Kirbies
 {
 

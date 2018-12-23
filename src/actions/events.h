@@ -8,7 +8,7 @@
 #include <irrlicht.h>
 #include "jump.h"
 #include "collision.h"
-#include "player_state.h"
+#include "../level/player_state.h"
 
 class EventReceiver : public irr::IEventReceiver
 {

@@ -189,13 +189,17 @@ void Collision::compute_collision()
     if(!coins[k].get_isBeingLooted())
     {
       irr::scene::ISceneNode * coin_node = smgr->getSceneNodeFromId(k + 5 + nb_kirbies);
-      irr::core::aabbox3d<float> coinBox = coin_node->getTransformedBoundingBox();
-      if(coinBox.intersectsWithBox(nodeBox))
+      if(coin_node)
       {
-        coins[k].loot();
-        player_state->add_score(50);
-        player_state->loot_coin();
+        irr::core::aabbox3d<float> coinBox = coin_node->getTransformedBoundingBox();
+        if(coinBox.intersectsWithBox(nodeBox))
+        {
+          coins[k].loot();
+          player_state->add_score(50);
+          player_state->loot_coin();
+        }
       }
+      
     }
 
   }

@@ -7,8 +7,8 @@
 
 #include <irrlicht.h>
 #include "jump.h"
-#include "entities.h"
-#include "player_state.h"
+#include "../level/entities.h"
+#include "../level/player_state.h"
 
 class Collision
 {
