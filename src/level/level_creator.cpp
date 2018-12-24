@@ -35,10 +35,12 @@ int Level_Creator::create_coins(irr::core::vector3df position, irr::core::vector
 	{
 		case 0:
 			{
-				coins[coins_id] = Coins();
-			    coins[coins_id].set_smgr(smgr);
-			    coins[coins_id].init(ic::vector3df(position.X, position.Y + 80, position.Z), coins_id + 5 + nb_kirbies);
-			    coins_id++;
+        Coins coin;
+        (*coins).push_back(coin);
+        (*coins)[coins_id] = Coins();
+		    (*coins)[coins_id].set_smgr(smgr);
+		    (*coins)[coins_id].init(ic::vector3df(position.X, position.Y + 80, position.Z), coins_id + 5 + nb_kirbies);
+		    coins_id++;
 			}			
 			break;
 		case 1:
@@ -46,10 +48,11 @@ int Level_Creator::create_coins(irr::core::vector3df position, irr::core::vector
 				float platform_width = 20 * platform_size.X;
 				for(int k = 0; k < 2; k++)
 				{
-					coins[coins_id] = Coins();
-				    coins[coins_id].set_smgr(smgr);
-				    coins[coins_id].init(ic::vector3df(position.X - platform_width/4 + k*platform_width/2, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
-				    coins_id++;
+          Coins coin = Coins();
+          (*coins).push_back(coin);
+			    (*coins)[coins_id].set_smgr(smgr);
+			    (*coins)[coins_id].init(ic::vector3df(position.X - platform_width/4 + k*platform_width/2, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
+			    coins_id++;
 				}
 			}			
 			break;
@@ -58,10 +61,11 @@ int Level_Creator::create_coins(irr::core::vector3df position, irr::core::vector
 				float platform_width = 20 * platform_size.X;
 				for(int k = 0; k < 4; k++)
 				{
-					coins[coins_id] = Coins();
-				    coins[coins_id].set_smgr(smgr);
-				    coins[coins_id].init(ic::vector3df(position.X - platform_width/2 + platform_width/8 + k*platform_width/4, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
-				    coins_id++;
+          Coins coin = Coins();
+          (*coins).push_back(coin);
+			    (*coins)[coins_id].set_smgr(smgr);
+			    (*coins)[coins_id].init(ic::vector3df(position.X - platform_width/2 + platform_width/8 + k*platform_width/4, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
+			    coins_id++;
 				}
 			}	
 		break;
@@ -70,19 +74,21 @@ int Level_Creator::create_coins(irr::core::vector3df position, irr::core::vector
 				float platform_width = 20 * platform_size.X;
 				for(int k = 0; k < 15; k++)
 				{
-					coins[coins_id] = Coins();
-				    coins[coins_id].set_smgr(smgr);
-				    coins[coins_id].init(ic::vector3df(position.X - platform_width/2 + platform_width/30 + k*platform_width/15, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
-				    coins_id++;
+          Coins coin = Coins();
+          (*coins).push_back(coin);
+			    (*coins)[coins_id].set_smgr(smgr);
+			    (*coins)[coins_id].init(ic::vector3df(position.X - platform_width/2 + platform_width/30 + k*platform_width/15, position.Y + 20, position.Z), coins_id + 5 + nb_kirbies);
+			    coins_id++;
 				}
 			}
 		break;
 		default:
 			{
-				coins[coins_id] = Coins();
-			    coins[coins_id].set_smgr(smgr);
-			    coins[coins_id].init(ic::vector3df(position.X, position.Y + 80, position.Z), coins_id + 5 + nb_kirbies);
-			    coins_id++;
+        Coins coin = Coins();
+        (*coins).push_back(coin);  
+		    (*coins)[coins_id].set_smgr(smgr);
+		    (*coins)[coins_id].init(ic::vector3df(position.X, position.Y + 80, position.Z), coins_id + 5 + nb_kirbies);
+		    coins_id++;
 			}
 			break;
 	}
@@ -94,9 +100,10 @@ int Level_Creator::create_coins(irr::core::vector3df position, irr::core::vector
 \**************************************************************************/
 void Level_Creator::create_kirbies(irr::core::vector3df position, int kirbies_id)
 {
-    kirbies[kirbies_id] = Kirbies();
-    kirbies[kirbies_id].set_smgr(smgr);
-    kirbies[kirbies_id].init(position, kirbies_id + 5);
+  Kirbies kirby = Kirbies();
+  (*kirbies).push_back(kirby);
+  (*kirbies)[kirbies_id].set_smgr(smgr);
+  (*kirbies)[kirbies_id].init(position, kirbies_id + 5);
 }
 
 /**************************************************************************\
@@ -126,7 +133,7 @@ void Level_Creator::set_driver(irr::video::IVideoDriver *d)
 /**************************************************************************\
  * Level_Creator::set_coins                                           *
 \**************************************************************************/
-void Level_Creator::set_coins(Coins *c)
+void Level_Creator::set_coins(std::vector<Coins> *c)
 {
 	coins = c;
 }
@@ -134,7 +141,7 @@ void Level_Creator::set_coins(Coins *c)
 /**************************************************************************\
  * Level_Creator::set_kirbies                                           *
 \**************************************************************************/
-void Level_Creator::set_kirbies(Kirbies *k)
+void Level_Creator::set_kirbies(std::vector<Kirbies> *k)
 {
 	kirbies = k;
 }
@@ -175,7 +182,7 @@ void Level_Creator::load_level(int position_nb[], std::vector<irr::core::vector3
     	{
     		create_platform(position_data[position_id], 5 + nb_coins + nb_kirbies + position_id, platform_sizes[platform_type], brick, texture_mat);
 		    coins_id = create_coins(position_data[position_id], platform_sizes[platform_type], coins_id, platform_type, nb_kirbies);
-		    position_id++;
+        position_id++;
     	}
     }
 
@@ -250,5 +257,4 @@ void Level_Creator::load_background()
     tree_nodes[i]->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
     tree_nodes[i]->setPosition(ic::vector3df(i*200, 20, rand()%300 + 200));
   }
-
 }

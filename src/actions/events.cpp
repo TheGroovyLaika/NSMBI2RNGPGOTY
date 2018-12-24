@@ -62,9 +62,9 @@ bool EventReceiver::keyboard(const SEvent &event)
           node->setMD2Animation(is::EMAT_STAND);
         }
     }
-  return false;
-  
+  return false; 
 }
+
 /*------------------------------------------------------------------------*\
  * EventReceiver::mouse                                                   *
 \*------------------------------------------------------------------------*/
@@ -139,7 +139,6 @@ void EventReceiver::set_player_state(Player_state *ps)
 \**************************************************************************/
 void EventReceiver::compute_keyboard()
 {    
-
   //Gestion des vitesses laterales (gauche et droite) en fonction de la touche sur laquelle on a appuye plus tot
   if (key_pressed_down)
   {
@@ -172,9 +171,7 @@ void EventReceiver::compute_keyboard()
                 collision->set_walking(true);
                 isWalking = true;
               }
-
             }
-
             rotation.Y = 0;
             node->setPosition(position);
           }
@@ -202,17 +199,12 @@ void EventReceiver::compute_keyboard()
                 isWalking = true;
               }
             }
-
             rotation.Y = 180 ;
             node->setPosition(position);
           }
           break;
-
         default:;
       }
-
     node->setRotation(rotation);
-
   }
-  
 }

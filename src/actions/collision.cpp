@@ -65,7 +65,7 @@ void Collision::set_kirbies_number(int k)
 /**************************************************************************\
  * Collision::set_kirbies                                               *
 \**************************************************************************/
-void Collision::set_kirbies(Kirbies *k)
+void Collision::set_kirbies(std::vector<Kirbies> *k)
 {
   kirbies = k;
 }
@@ -81,7 +81,7 @@ void Collision::set_coins_number(int c)
 /**************************************************************************\
  * Collision::set_coins                                               *
 \**************************************************************************/
-void Collision::set_coins(Coins *c)
+void Collision::set_coins(std::vector<Coins> *c)
 {
   coins = c;
 }
@@ -152,7 +152,7 @@ void Collision::compute_collision()
   //Collision avec les Kirbies
   for(int k = 0; k < nb_kirbies; k++)
   {
-    if(kirbies[k].get_isAlive())
+    if((*kirbies)[k].get_isAlive())
     {
       irr::scene::ISceneNode * kirby_node = smgr->getSceneNodeFromId(k + 5);
       irr::core::aabbox3d<float> kirbyBox = kirby_node->getTransformedBoundingBox();
@@ -173,7 +173,7 @@ void Collision::compute_collision()
             jump->jump();
             player_state->add_score(300);
             player_state->add_a_dead_kirby();
-            kirbies[k].kill();
+            (*kirbies)[k].kill();
           }
         }
         
@@ -186,7 +186,7 @@ void Collision::compute_collision()
   //Collision avec les Pièces
   for(int k = 0; k < nb_coins; k++)
   {
-    if(!coins[k].get_isBeingLooted())
+    if(!(*coins)[k].get_isBeingLooted())
     {
       irr::scene::ISceneNode * coin_node = smgr->getSceneNodeFromId(k + 5 + nb_kirbies);
       if(coin_node)
@@ -194,7 +194,7 @@ void Collision::compute_collision()
         irr::core::aabbox3d<float> coinBox = coin_node->getTransformedBoundingBox();
         if(coinBox.intersectsWithBox(nodeBox))
         {
-          coins[k].loot();
+          (*coins)[k].loot();
           player_state->add_score(50);
           player_state->loot_coin();
         }
