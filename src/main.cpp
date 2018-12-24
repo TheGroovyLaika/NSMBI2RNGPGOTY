@@ -8,6 +8,7 @@
 #include "level/entities.h"
 #include "level/player_state.h"
 #include "level/level_creator.h"
+#include "level/file_loader.h"
 
 #include <iostream>
 #include <time.h>
@@ -48,65 +49,18 @@ int main()
   is::ISceneManager   *smgr = device->getSceneManager();
   ig::IGUIEnvironment *gui  = device->getGUIEnvironment();
 
+  File_loader file_loader = File_loader();
+  char const *filename = "./data/level1.txt";
+  file_loader.position_loader(filename);
 
-  int position_nb[5] = {6, 10, 8, 5, 25};
-  std::vector<ic::vector3df> position_data = {ic::vector3df(2200, 50, 0), 
-                                              ic::vector3df(2400, 50, 0), 
-                                              ic::vector3df(2600, 50, 0),
-                                              ic::vector3df(2800, 50, 0), 
-                                              ic::vector3df(3000, 50, 0), 
-                                              ic::vector3df(5300, 50, 0),
-                                              ic::vector3df(3690, 50, 0),  
-                                              ic::vector3df(3770, 150, 0), 
-                                              ic::vector3df(3850, 250, 0), 
-                                              ic::vector3df(4500, 200, 0), 
-                                              ic::vector3df(5370, 150, 0), 
-                                              ic::vector3df(5480, 250, 0),
-                                              ic::vector3df(6240, 450, 0), 
-                                              ic::vector3df(6350, 550, 0), 
-                                              ic::vector3df(7540, 50, 0),
-                                              ic::vector3df(7660, 125, 0),
-                                              ic::vector3df(400, 75, 0), 
-                                              ic::vector3df(4000, 325, 0),  
-                                              ic::vector3df(4300, 325, 0),
-                                              ic::vector3df(6460, 650, 0), 
-                                              ic::vector3df(5700, 650, 0),
-                                              ic::vector3df(4850, 375, 0),
-                                              ic::vector3df(6850, 50, 0), 
-                                              ic::vector3df(7880, 300, 0),
-                                              ic::vector3df(850, 150, 0), 
-                                              ic::vector3df(1530, 50, 0), 
-                                              ic::vector3df(5890, 350, 0),
-                                              ic::vector3df(6110, 750, 0), 
-                                              ic::vector3df(5290, 550, 0),
-                                              ic::vector3df(2100, 0, 0),
-                                              ic::vector3df(2300, 0, 0),
-                                              ic::vector3df(2500, 45, 0),
-                                              ic::vector3df(2700, 0, 0),
-                                              ic::vector3df(2900, 45, 0),
-                                              ic::vector3df(3100, 0, 0),
-                                              ic::vector3df(200, 0, 0),
-                                              ic::vector3df(500, 0, 0),
-                                              ic::vector3df(800, 0, 0),
-                                              ic::vector3df(1150, 0, 0),
-                                              ic::vector3df(1930, 50, 0),
-                                              ic::vector3df(3300, 50, 0),
-                                              ic::vector3df(3500, 45, 0),
-                                              ic::vector3df(4600, 230, 0),
-                                              ic::vector3df(4800, 0, 0),
-                                              ic::vector3df(5000, 45, 0),
-                                              ic::vector3df(5200, 0, 0),
-                                              ic::vector3df(5370, 45, 0),
-                                              ic::vector3df(5550, 260, 0),
-                                              ic::vector3df(6300, 450, 0),
-                                              ic::vector3df(6500, 750, 0),
-                                              ic::vector3df(5630, 570, 0),
-                                              ic::vector3df(6950, 80, 0),
-                                              ic::vector3df(7200, 20, 0),
-                                              ic::vector3df(7500, 20, 0),};
+  int position_nb[5] = {*file_loader.getPosition_nb(),
+                        *(file_loader.getPosition_nb() + 1),
+                        *(file_loader.getPosition_nb() + 2),
+                        *(file_loader.getPosition_nb() + 3),
+                        *(file_loader.getPosition_nb() + 4)};
+  std::vector<ic::vector3df> position_data = file_loader.getPosition_data();
 
   int nb_coins = position_nb[0] + position_nb[1] * 2 + position_nb[2] * 4 + position_nb[3] * 15;
-  int coins_id = 0;
   int nb_kirbies = position_nb[4];
 
   Coins coins[nb_coins];
@@ -203,9 +157,6 @@ int main()
   std::vector<ic::vector3df> P_big_c = {ic::vector3df(850, 150, 0), ic::vector3df(1530, 50, 0), ic::vector3df(5890, 350, 0),
 					ic::vector3df(6110, 750, 0), ic::vector3df(5290, 550, 0)};
   
-  iv::ITexture *brick = driver->getTexture("data/Brick.jpg");
-    
-
   //Generation du sol
   irr::core::matrix4 mat;
   mat.setTextureScale(50.0F,150.0F);
