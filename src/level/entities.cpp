@@ -198,7 +198,6 @@ void Coins::init(ic::vector3df pos, int id)
 
   coin_node->setRotation(ic::vector3df(coin_node->getRotation().X, 90, coin_node->getRotation().Z));
   coin_node->setPosition(pos);
-  
 }
 
 /**************************************************************************\

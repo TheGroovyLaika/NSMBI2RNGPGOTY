@@ -63,8 +63,8 @@ int main()
   int nb_coins = position_nb[0] + position_nb[1] * 2 + position_nb[2] * 4 + position_nb[3] * 15;
   int nb_kirbies = position_nb[4];
 
-  Coins coins[nb_coins];
-  Kirbies kirbies[nb_kirbies];
+  std::vector<Coins> coins;
+  std::vector<Kirbies> kirbies;
   Player player = Player();
   
   // Chargement de notre personnage
@@ -86,8 +86,8 @@ int main()
   // Chargement du niveau
   level_creator.set_smgr(smgr);                    
   level_creator.set_driver(driver);                    
-  level_creator.set_coins(coins);                    
-  level_creator.set_kirbies(kirbies);                    
+  level_creator.set_coins(&coins);                    
+  level_creator.set_kirbies(&kirbies);                    
   level_creator.load_level(position_nb, position_data);
   level_creator.load_background();
 
@@ -108,9 +108,9 @@ int main()
   collision.set_smgr(smgr);
   collision.set_jump(&jump);
   collision.set_kirbies_number(nb_kirbies);
-  collision.set_kirbies(kirbies);
+  collision.set_kirbies(&kirbies);
   collision.set_coins_number(nb_coins);
-  collision.set_coins(coins);
+  collision.set_coins(&coins);
   collision.set_player_state(&player_state);
 
 
@@ -140,22 +140,6 @@ int main()
   ig::IGUIImage *start_game   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
   start_game->setScaleImage(true);
   start_game->setImage(driver->getTexture("data/start_game.png"));
-    
-  // Tableau des positions 
-  std::vector<ic::vector3df> P_unit_c = {ic::vector3df(2200, 50, 0), ic::vector3df(2400, 50, 0), ic::vector3df(2600, 50, 0),
-					 ic::vector3df(2800, 50, 0), ic::vector3df(3000, 50, 0), ic::vector3df(5300, 50, 0)};
-  
-  std::vector<ic::vector3df> P_little_c = {ic::vector3df(3690, 50, 0),  ic::vector3df(3770, 150, 0), ic::vector3df(3850, 250, 0), 
-					   ic::vector3df(4500, 200, 0), ic::vector3df(5370, 150, 0), ic::vector3df(5480, 250, 0),
-					   ic::vector3df(6240, 450, 0), ic::vector3df(6350, 550, 0), ic::vector3df(7540, 50, 0),
-					   ic::vector3df(7660, 125, 0)};
-  
-  std::vector<ic::vector3df> P_mean_c = {ic::vector3df(400, 75, 0), ic::vector3df(4000, 325, 0),  ic::vector3df(4300, 325, 0),
-					 ic::vector3df(6460, 650, 0), ic::vector3df(5700, 650, 0), ic::vector3df(4850, 375, 0),
-					 ic::vector3df(6850, 50, 0), ic::vector3df(7880, 300, 0)};
-  
-  std::vector<ic::vector3df> P_big_c = {ic::vector3df(850, 150, 0), ic::vector3df(1530, 50, 0), ic::vector3df(5890, 350, 0),
-					ic::vector3df(6110, 750, 0), ic::vector3df(5290, 550, 0)};
   
   //Generation du sol
   irr::core::matrix4 mat;
@@ -347,8 +331,6 @@ int main()
     // Dessin de la GUI :
     gui->drawAll();
     driver->endScene();
-
-
 
   }
   device->drop();
