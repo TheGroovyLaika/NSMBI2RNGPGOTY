@@ -19,11 +19,13 @@ void Level_Creator::create_platform(irr::core::vector3df position, int mesh_id, 
 {
 	is::ISceneNode* cube_node;
 	cube_node = smgr->addCubeSceneNode(20);
-    cube_node->setPosition(position);
-    cube_node->setScale(platform_size);
-    cube_node->setID(mesh_id);
-    cube_node->setMaterialTexture(0, texture);
+  cube_node->setPosition(position);
+  cube_node->setScale(platform_size);
+  cube_node->setID(mesh_id);
+  cube_node->setMaterialTexture(0, texture);
 	cube_node->getMaterial(0).setTextureMatrix(0,texture_mat);
+
+  std::cout<<"---- ID : "<<mesh_id<<std::endl;
 }
 
 /**************************************************************************\
@@ -110,7 +112,7 @@ void Level_Creator::create_kirbies(irr::core::vector3df position, int kirbies_id
  * Level_Creator::Level_Creator                                           *
 \**************************************************************************/
 Level_Creator::Level_Creator()
-  : smgr(nullptr), driver(nullptr), coins(nullptr)
+  : smgr(nullptr), driver(nullptr), coins(nullptr), kirbies(nullptr), nb_kirbies(0), nb_coins(0), nb_platforms(0), levelIsMade(false)
 {
 }
 
@@ -146,6 +148,11 @@ void Level_Creator::set_kirbies(std::vector<Kirbies> *k)
 	kirbies = k;
 }
 
+bool Level_Creator::get_level_state()
+{
+  return levelIsMade;
+}
+
 /**************************************************************************\
  * Level_Creator::load_level                                           *
 
@@ -169,27 +176,29 @@ void Level_Creator::load_level(int position_nb[], std::vector<irr::core::vector3
 	int position_id = 0;
 	int coins_id = 0;
  	iv::ITexture *brick = driver->getTexture("data/Brick.jpg");
-  	irr::core::matrix4 texture_mat;
+	irr::core::matrix4 texture_mat;
 
-  	int nb_coins = position_nb[0] + position_nb[1] * 2 + position_nb[2] * 4 + position_nb[3] * 15;
- 	int nb_kirbies = position_nb[4];
+  nb_coins = position_nb[0] + position_nb[1] * 2 + position_nb[2] * 4 + position_nb[3] * 15;
+ 	nb_kirbies = position_nb[4];
+  nb_platforms = position_nb[0] + position_nb[1] + position_nb[2] + position_nb[3]; 
 
-    for(int platform_type = 0; platform_type < 4; platform_type++)
-    {
-    	texture_mat.setTextureScale(platform_sizes[platform_type].X, platform_sizes[platform_type].Y);
+  for(int platform_type = 0; platform_type < 4; platform_type++)
+  {
+  	texture_mat.setTextureScale(platform_sizes[platform_type].X, platform_sizes[platform_type].Y);
 
-    	for(int platform_nb = 0; platform_nb < position_nb[platform_type]; platform_nb++)
-    	{
-    		create_platform(position_data[position_id], 5 + nb_coins + nb_kirbies + position_id, platform_sizes[platform_type], brick, texture_mat);
-		    coins_id = create_coins(position_data[position_id], platform_sizes[platform_type], coins_id, platform_type, nb_kirbies);
-        position_id++;
-    	}
-    }
+  	for(int platform_nb = 0; platform_nb < position_nb[platform_type]; platform_nb++)
+  	{
+  		create_platform(position_data[position_id], 5 + nb_coins + nb_kirbies + position_id, platform_sizes[platform_type], brick, texture_mat);
+	    coins_id = create_coins(position_data[position_id], platform_sizes[platform_type], coins_id, platform_type, nb_kirbies);
+      position_id++;
+  	}
+  }
 
-    for(int kirbies_id = 0; kirbies_id < nb_kirbies; kirbies_id++)
-    {
-    	create_kirbies(position_data[position_id + kirbies_id], kirbies_id);
-    }
+  for(int kirbies_id = 0; kirbies_id < nb_kirbies; kirbies_id++)
+  {
+  	create_kirbies(position_data[position_id + kirbies_id], kirbies_id);
+  }
+  levelIsMade = true;
 }
 
 /**************************************************************************\
@@ -197,7 +206,6 @@ void Level_Creator::load_level(int position_nb[], std::vector<irr::core::vector3
 \**************************************************************************/
 void Level_Creator::load_background()
 {
-
    // Fond
   is::IAnimatedMesh *background = smgr->addHillPlaneMesh("background",
                                                           ic::dimension2d<irr::f32>(2000,1000),
@@ -257,4 +265,32 @@ void Level_Creator::load_background()
     tree_nodes[i]->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
     tree_nodes[i]->setPosition(ic::vector3df(i*200, 20, rand()%300 + 200));
   }
+}
+
+/**************************************************************************\
+ * Level_Creator::remove_platforms                                           *
+\**************************************************************************/
+void Level_Creator::remove_level()
+{
+  for(int mesh_id = 5 + nb_coins + nb_kirbies; mesh_id < 5 + nb_coins + nb_kirbies + nb_platforms; mesh_id++)
+  {
+    std::cout<<"Removing platform ---- ID : "<<mesh_id<<std::endl;
+    smgr->getSceneNodeFromId(mesh_id)->remove();
+  }
+
+  while(!(*coins).empty())
+  {
+    std::cout<<"Removing coins ---- size : "<<(*coins).size()<<std::endl;
+    (*coins).back().remove_node();
+    (*coins).pop_back();
+  }
+
+  while(!(*kirbies).empty())
+  {
+    std::cout<<"Removing kirbies ---- size : "<<(*kirbies).size()<<std::endl;
+    (*kirbies).back().remove_node();
+    (*kirbies).pop_back();
+  }
+
+  levelIsMade = false;
 }

@@ -142,10 +142,17 @@ void Kirbies::kill()
 {
   //Gestion de la mort d'un Kirby :'(
   isAlive = false;
-  kirby_node->remove();
+  kirby_node->setVisible(false);
 }
 
-
+/**************************************************************************\
+ * Kirbies::remove_node                                                *
+\**************************************************************************/
+void Kirbies::remove_node()
+{
+  if(kirby_node)
+    kirby_node->remove();
+}
 
 /* ------------------ Coins --------------------*/
 /**************************************************************************\
@@ -252,7 +259,7 @@ void Coins::update_position()
     else
     {
       isLooted = true;
-      coin_node->remove();  
+      coin_node->setVisible(false);
     }
   }
 
@@ -270,4 +277,15 @@ void Coins::loot() //Gestion de la recuperation des pieces
 {
   isBeingLooted = true;
   coin_speed = -5;
+}
+
+/**************************************************************************\
+ * Coins::remove_node                                                *
+\**************************************************************************/
+void Coins::remove_node()
+{
+  if(coin_node)
+  {
+    coin_node->remove();
+  }
 }

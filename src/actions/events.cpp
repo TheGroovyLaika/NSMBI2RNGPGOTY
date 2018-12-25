@@ -28,8 +28,8 @@ bool EventReceiver::keyboard(const SEvent &event)
     if (event.KeyInput.PressedDown)
     {
       
-      if(!player_state->get_started_game())
-	player_state->start_game();
+      if(player_state->get_game_state() == start_screen)
+	    player_state->set_game_state(in_game);
       key_code = event.KeyInput.Key;
       ic::vector3df rotation = node->getRotation();
       switch (event.KeyInput.Key)
@@ -38,7 +38,7 @@ bool EventReceiver::keyboard(const SEvent &event)
           exit(0);
 	  break;
         case KEY_KEY_Z: // Saute
-          if (player_state->get_alive())
+          if (player_state->get_game_state() == in_game)
             jump->jump();
 	  break;
       	case KEY_KEY_M: //Godmode
@@ -52,7 +52,7 @@ bool EventReceiver::keyboard(const SEvent &event)
 
     // Gestion de l'animation "debout" lorsque le joueur n'appuie pas sur une touche
     if(event.EventType == EET_KEY_INPUT_EVENT &&
-          !event.KeyInput.PressedDown && player_state->get_alive())
+          !event.KeyInput.PressedDown && player_state->get_game_state() == in_game)
     {        
         isWalking = false;
         collision->set_walking(false);
@@ -147,7 +147,7 @@ void EventReceiver::compute_keyboard()
     switch (key_code)
       {
         case KEY_KEY_D: // Tourne à droite
-          if(player_state->get_alive())
+          if(player_state->get_game_state() == in_game)
           {
             if(lateral_speed < 0  )
               lateral_speed = 0; 
@@ -178,7 +178,7 @@ void EventReceiver::compute_keyboard()
           break;
 
         case KEY_KEY_Q: // Tourne à gauche
-          if(player_state->get_alive())
+          if(player_state->get_game_state() == in_game)
           {
             if(lateral_speed > 0  )
               lateral_speed = 0;

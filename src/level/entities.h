@@ -34,6 +34,7 @@ public:
   void init(irr::core::vector3df pos, int id);
   void update_position();
   void kill();
+  void remove_node();
 
 };
 
@@ -56,6 +57,7 @@ public:
   void init(irr::core::vector3df pos, int id);
   void update_position();
   void loot();
+  void remove_node();
 
 };
 

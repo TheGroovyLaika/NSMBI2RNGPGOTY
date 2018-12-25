@@ -169,148 +169,146 @@ int main()
 
   while(device->run())
   {
-    // Si la partie commence, on supprime l'image de debut de partie
-    if(player_state.get_started_game() && !hasGameSartedYet)
+    switch(player_state.get_game_state())
     {
-      start_game->remove();
-      hasGameSartedYet = true;
-    }
+      case in_game:
+        if(!hasGameSartedYet)
+        {
+          start_game->remove();
+          hasGameSartedYet = true;
+        }
 
-    // Quand le joueur depasse la ligne d'arrivee, on enclenche le process de fin de partie..
-    if(camera->getPosition().X >= 8080)
-      player_state.finish_line();
+        // Quand le joueur depasse la ligne d'arrivee, on enclenche le process de fin de partie..
+        if(camera->getPosition().X >= 8080)
+          player_state.set_game_state(finishing_run);
 
-    // Tant que le joueur est en vie et que le process de fin de partie n'est pas en cours, on gere camera, collisions, evenements, sauts, et gestion du score
-    if(player_state.get_alive() && !player_state.get_finishing_run())
-    {
-      // Reglage caméra afin qu'elle suive le joueur en X et en Y
-      camera_position = camera->getPosition();
-      camera_target   = camera->getTarget();
-      position        = node->getPosition();
+        // Reglage caméra afin qu'elle suive le joueur en X et en Y
+        camera_position = camera->getPosition();
+        camera_target   = camera->getTarget();
+        position        = node->getPosition();
 
-      if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
-      {
-        camera_position.X = position.X + 165;
-        camera_target.X = position.X + 165;
-      }
-      else if(position.X > camera_position.X && camera_position.X < 8080.0f)
-      {
-        camera_position.X = position.X;
-        camera_target.X   = position.X;  
-      }
+        if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
+        {
+          camera_position.X = position.X + 165;
+          camera_target.X = position.X + 165;
+        }
+        else if(position.X > camera_position.X && camera_position.X < 8080.0f)
+        {
+          camera_position.X = position.X;
+          camera_target.X   = position.X;  
+        }
 
-      if(node->getPosition().Y - camera_position.Y  > 70)
-      {
-        camera_position.Y = position.Y - 70;
-        camera_target.Y = position.Y - 70;
-      }
+        if(node->getPosition().Y - camera_position.Y  > 70)
+        {
+          camera_position.Y = position.Y - 70;
+          camera_target.Y = position.Y - 70;
+        }
 
-      if(camera->getPosition().Y > 50)
-      {
-        camera_position.Y = position.Y - 70;
-        camera_target.Y = position.Y - 70;
-      }
+        if(camera->getPosition().Y > 50)
+        {
+          camera_position.Y = position.Y - 70;
+          camera_target.Y = position.Y - 70;
+        }
 
-      //Effet ed style de camera en debut de partie
-      if(position.X < 250)
-      {
-        camera_position.Y = position.Y + 350 - position.X;
-      }
-      
-      if(position.X >= 250 && position.X < 260)
-      {
-        camera_position.Y = position.Y + 50;
-	      camera_target.Y = position.Y + 50;
-      }
+        //Effet ed style de camera en debut de partie
+        if(position.X < 250)
+        {
+          camera_position.Y = position.Y + 350 - position.X;
+        }
+        
+        if(position.X >= 250 && position.X < 260)
+        {
+          camera_position.Y = position.Y + 50;
+          camera_target.Y = position.Y + 50;
+        }
 
-      camera->setPosition(camera_position);
-      camera->setTarget(camera_target);
+        camera->setPosition(camera_position);
+        camera->setTarget(camera_target);
 
-      // Gestion de la position des kirbies et des pieces (qui flottent en l'air)
-      for(int k = 0; k < nb_kirbies; k++)
-      {
-        kirbies[k].update_position();
-      }
+        // Gestion de la position des kirbies et des pieces (qui flottent en l'air)
+        for(unsigned int k = 0; k < kirbies.size(); k++)
+        {
+          kirbies[k].update_position();
+        }
 
-      for(int k = 0; k < nb_coins; k++)
-      {
-        coins[k].update_position();
-      }
+        for(unsigned int k = 0; k < coins.size(); k++)
+        {
+          coins[k].update_position();
+        }
 
-      // Calcul du saut :
-      jump.update_jump();
+        // Calcul du saut :
+        jump.update_jump();
 
-      // Contrôle clavier :
-      receiver.compute_keyboard();
+        // Contrôle clavier :
+        receiver.compute_keyboard();
 
-      // Calcul de la collision :
-      collision.compute_collision(); 
+        // Calcul de la collision :
+        collision.compute_collision(); 
 
-      //Calcul du score :
-      player_state.compute_score();
+        //Calcul du score :
+        player_state.compute_score();
 
-      if(node->getPosition().X < -30)
-        node->setPosition(ic::vector3df(-30, node->getPosition().Y, node->getPosition().Z));
-    }  
+        if(node->getPosition().X < -30)
+          node->setPosition(ic::vector3df(-30, node->getPosition().Y, node->getPosition().Z));
+      break;
+      case game_is_over:
+        // On attend une petite duree (animation de mort)
+        if(player_state.get_timer() < 60)
+        {
+          player_state.increase_timer();
+        }
+        else //Puis on affiche l'ecran de fin de partie
+        {
+          if(level_creator.get_level_state())
+            level_creator.remove_level();
+          //Image de Game Over
+          ig::IGUIImage *game_over   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
+          game_over->setScaleImage(true);
+          game_over->setImage(driver->getTexture("data/gameover.png"));
 
-    // Si le joueur est mort
-    else if(!player_state.get_alive())
-    {
-      // On attend une petite duree (animation de mort)
-      if(player_state.get_timer() < 60)
-      {
-        player_state.increase_timer();
-      }
-      else //Puis on affiche l'ecran de fin de partie
-      {
-        //Image de Game Over
-        ig::IGUIImage *game_over   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
-        game_over->setScaleImage(true);
-        game_over->setImage(driver->getTexture("data/gameover.png"));
+          // Score final
+          ig::IGUIImage *final_score_1000  = gui->addImage(ic::rect<s32>(258,390,  289,427)); final_score_1000->setScaleImage(true);
+          ig::IGUIImage *final_score_100   = gui->addImage(ic::rect<s32>(289,390,  320,427)); final_score_100->setScaleImage(true);
+          ig::IGUIImage *final_score_10    = gui->addImage(ic::rect<s32>(320,390, 351,427)); final_score_10->setScaleImage(true);
+          ig::IGUIImage *final_score_1     = gui->addImage(ic::rect<s32>(351,390, 383 ,427)); final_score_1->setScaleImage(true);
 
-        // Score final
-        ig::IGUIImage *final_score_1000  = gui->addImage(ic::rect<s32>(258,390,  289,427)); final_score_1000->setScaleImage(true);
-        ig::IGUIImage *final_score_100   = gui->addImage(ic::rect<s32>(289,390,  320,427)); final_score_100->setScaleImage(true);
-        ig::IGUIImage *final_score_10    = gui->addImage(ic::rect<s32>(320,390, 351,427)); final_score_10->setScaleImage(true);
-        ig::IGUIImage *final_score_1     = gui->addImage(ic::rect<s32>(351,390, 383 ,427)); final_score_1->setScaleImage(true);
+          score = player_state.get_score();
 
-        score = player_state.get_score();
+          // Mise à jour du score final :
+          final_score_1000->setImage(digits[(score / 1000) % 10]);
+          final_score_100->setImage(digits[(score / 100) % 10]);
+          final_score_10->setImage(digits[(score / 10) % 10]);
+          final_score_1->setImage(digits[(score / 1) % 10]);
 
-        // Mise à jour du score final :
-        final_score_1000->setImage(digits[(score / 1000) % 10]);
-        final_score_100->setImage(digits[(score / 100) % 10]);
-        final_score_10->setImage(digits[(score / 10) % 10]);
-        final_score_1->setImage(digits[(score / 1) % 10]);
+          // Nombre de pieces collectees
+          ig::IGUIImage *nb_coins_100   = gui->addImage(ic::rect<s32>(70,115,  101,152)); nb_coins_100->setScaleImage(true);
+          ig::IGUIImage *nb_coins_10    = gui->addImage(ic::rect<s32>(101,115, 132,152)); nb_coins_10->setScaleImage(true);
+          ig::IGUIImage *nb_coins_1     = gui->addImage(ic::rect<s32>(132,115, 163 ,152)); nb_coins_1->setScaleImage(true);
 
-        // Nombre de pieces collectees
-        ig::IGUIImage *nb_coins_100   = gui->addImage(ic::rect<s32>(70,115,  101,152)); nb_coins_100->setScaleImage(true);
-        ig::IGUIImage *nb_coins_10    = gui->addImage(ic::rect<s32>(101,115, 132,152)); nb_coins_10->setScaleImage(true);
-        ig::IGUIImage *nb_coins_1     = gui->addImage(ic::rect<s32>(132,115, 163 ,152)); nb_coins_1->setScaleImage(true);
+          int collected_coins = player_state.get_coins();
 
-        int collected_coins = player_state.get_coins();
+          nb_coins_100->setImage(digits[(collected_coins / 100) % 10]);
+          nb_coins_10->setImage(digits[(collected_coins / 10) % 10]);
+          nb_coins_1->setImage(digits[(collected_coins / 1) % 10]);
 
-        nb_coins_100->setImage(digits[(collected_coins / 100) % 10]);
-        nb_coins_10->setImage(digits[(collected_coins / 10) % 10]);
-        nb_coins_1->setImage(digits[(collected_coins / 1) % 10]);
+          // Nombre de Kirbies tues
+          ig::IGUIImage *nb_kirbies_10    = gui->addImage(ic::rect<s32>(470,115, 501,152)); nb_kirbies_10->setScaleImage(true);
+          ig::IGUIImage *nb_kirbies_1     = gui->addImage(ic::rect<s32>(501,115, 532 ,152)); nb_kirbies_1->setScaleImage(true);
 
-        // Nombre de Kirbies tues
-        ig::IGUIImage *nb_kirbies_10    = gui->addImage(ic::rect<s32>(470,115, 501,152)); nb_kirbies_10->setScaleImage(true);
-        ig::IGUIImage *nb_kirbies_1     = gui->addImage(ic::rect<s32>(501,115, 532 ,152)); nb_kirbies_1->setScaleImage(true);
+          int killed_kirbies = player_state.get_kirbies();
 
-        int killed_kirbies = player_state.get_kirbies();
-
-        nb_kirbies_10->setImage(digits[(killed_kirbies / 10) % 10]);
-        nb_kirbies_1->setImage(digits[(killed_kirbies / 1) % 10]);
-      }
-    }
-
-    //Gestion du process de fin de partie
-    if(player_state.get_finishing_run())
-    {
-      position = node->getPosition();
-      node->setPosition(ic::vector3df(position.X + 5, position.Y, position.Z));
-      if(position.X > 8300)
-        player_state.game_over();
+          nb_kirbies_10->setImage(digits[(killed_kirbies / 10) % 10]);
+          nb_kirbies_1->setImage(digits[(killed_kirbies / 1) % 10]);
+        }
+      break;
+      case finishing_run:
+        position = node->getPosition();
+        node->setPosition(ic::vector3df(position.X + 5, position.Y, position.Z));
+        if(position.X > 8300)
+          player_state.game_over();
+      break;
+      default:
+      break;
     }
 
     // Récupération du score :
