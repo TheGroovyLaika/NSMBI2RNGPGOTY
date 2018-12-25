@@ -133,7 +133,6 @@ void EventReceiver::set_player_state(Player_state *ps)
   player_state = ps;
 }
 
-
 /**************************************************************************\
  * EventReceiver::compute_keyboard                                                *
 \**************************************************************************/
@@ -207,4 +206,57 @@ void EventReceiver::compute_keyboard()
       }
     node->setRotation(rotation);
   }
+}
+
+/**************************************************************************\
+ * EventReceiver::compute_keyboard                                         *
+\**************************************************************************/
+void EventReceiver::compute_camera()
+{
+  // Quand le joueur depasse la ligne d'arrivee, on enclenche le process de fin de partie..
+  if(camera->getPosition().X >= 8080)
+    player_state->set_game_state(finishing_run);
+
+  // Reglage caméra afin qu'elle suive le joueur en X et en Y
+  ic::vector3df camera_position = camera->getPosition();
+  ic::vector3df camera_target   = camera->getTarget();
+  ic::vector3df position        = node->getPosition();
+
+  if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
+  {
+    camera_position.X = position.X + 165;
+    camera_target.X = position.X + 165;
+  }
+  else if(position.X > camera_position.X && camera_position.X < 8080.0f)
+  {
+    camera_position.X = position.X;
+    camera_target.X   = position.X;  
+  }
+
+  if(node->getPosition().Y - camera_position.Y  > 70)
+  {
+    camera_position.Y = position.Y - 70;
+    camera_target.Y = position.Y - 70;
+  }
+
+  if(camera->getPosition().Y > 50)
+  {
+    camera_position.Y = position.Y - 70;
+    camera_target.Y = position.Y - 70;
+  }
+
+  //Effet ed style de camera en debut de partie
+  if(position.X < 250)
+  {
+    camera_position.Y = position.Y + 350 - position.X;
+  }
+
+  if(position.X >= 250 && position.X < 260)
+  {
+    camera_position.Y = position.Y + 50;
+    camera_target.Y = position.Y + 50;
+  }
+
+  camera->setPosition(camera_position);
+  camera->setTarget(camera_target);
 }

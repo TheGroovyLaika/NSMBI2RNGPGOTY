@@ -37,6 +37,7 @@ public:
   void set_collision(Collision *collision);
   void set_player_state(Player_state *player_state);
   void compute_keyboard();
+  void compute_camera();
 };
 
 #endif

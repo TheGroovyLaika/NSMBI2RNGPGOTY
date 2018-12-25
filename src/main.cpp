@@ -9,6 +9,7 @@
 #include "level/player_state.h"
 #include "level/level_creator.h"
 #include "level/file_loader.h"
+#include "level/gui_display.h"
 
 #include <iostream>
 #include <time.h>
@@ -26,6 +27,7 @@ int main()
 
   // Le gestionnaire d'événements
   EventReceiver receiver = EventReceiver();
+
   //classe gérant les sauts
   Jump jump = Jump();
 
@@ -37,6 +39,9 @@ int main()
 
   //Level Creator
   Level_Creator level_creator = Level_Creator();
+
+  ///GUI Display
+  Gui_display gui_display = Gui_display();
 
   std::vector<iv::ITexture*> textures;
 
@@ -83,13 +88,6 @@ int main()
   ic::vector3df camera_target = ic::vector3df(0, 50, 0);
   is::ICameraSceneNode *camera = smgr->addCameraSceneNode(nullptr, camera_position, camera_target);
 
-  // Chargement du niveau
-  level_creator.set_smgr(smgr);                    
-  level_creator.set_driver(driver);                    
-  level_creator.set_coins(&coins);                    
-  level_creator.set_kirbies(&kirbies);                    
-  level_creator.load_level(position_nb, position_data);
-  level_creator.load_background();
 
   // Initialisation de la classe receiver
   receiver.set_node(node);
@@ -113,33 +111,25 @@ int main()
   collision.set_coins(&coins);
   collision.set_player_state(&player_state);
 
+  // Chargement du niveau
+  level_creator.set_smgr(smgr);
+  level_creator.set_driver(driver);                    
+  level_creator.set_coins(&coins);                    
+  level_creator.set_kirbies(&kirbies);                    
+  level_creator.load_level(position_nb, position_data);
+  level_creator.load_background();
+
+  //Chargement du GUI
+  gui_display.set_smgr(smgr);
+  gui_display.set_gui(gui);
+  gui_display.set_driver(driver);
+  gui_display.set_player_state(&player_state);
+  gui_display.init();
 
   // Initialisation de la classe player_state
   player_state.set_node(node);
   player_state.set_textures(textures);
 
-  // Chargement des textures pour les chiffres
-  iv::ITexture *digits[10];
-  digits[0] = driver->getTexture("data/0_score.png");
-  digits[1] = driver->getTexture("data/1_score.png");
-  digits[2] = driver->getTexture("data/2_score.png");
-  digits[3] = driver->getTexture("data/3_score.png");
-  digits[4] = driver->getTexture("data/4_score.png");
-  digits[5] = driver->getTexture("data/5_score.png");
-  digits[6] = driver->getTexture("data/6_score.png");
-  digits[7] = driver->getTexture("data/7_score.png");
-  digits[8] = driver->getTexture("data/8_score.png");
-  digits[9] = driver->getTexture("data/9_score.png");
-
-  // Création des places pour les chiffres
-  ig::IGUIImage *score_1000  = gui->addImage(ic::rect<s32>(50,10,  81,47)); score_1000->setScaleImage(true);
-  ig::IGUIImage *score_100   = gui->addImage(ic::rect<s32>(81,10,  112,47)); score_100->setScaleImage(true);
-  ig::IGUIImage *score_10    = gui->addImage(ic::rect<s32>(112,10, 143,47)); score_10->setScaleImage(true);
-  ig::IGUIImage *score_1     = gui->addImage(ic::rect<s32>(143,10, 174,47)); score_1->setScaleImage(true);
-
-  ig::IGUIImage *start_game   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
-  start_game->setScaleImage(true);
-  start_game->setImage(driver->getTexture("data/start_game.png"));
   
   //Generation du sol
   irr::core::matrix4 mat;
@@ -158,170 +148,71 @@ int main()
   light->getLightData().DiffuseColor = iv::SColorf(1.0f, 1.0f, 0.6f, 0.0);
 
   // set ambient light
-    smgr->setAmbientLight(iv::SColor(0,255,255,255));
-
+  smgr->setAmbientLight(iv::SColor(0,255,255,255));
 
   light->getLightData().SpecularColor = iv::SColorf(1.0f, 1.0f, 0.0, 0.0);
 
-
   int score = 0;
-
 
   while(device->run())
   {
     switch(player_state.get_game_state())
     {
       case in_game:
-        if(!hasGameSartedYet)
-        {
-          start_game->remove();
-          hasGameSartedYet = true;
-        }
+      // Gestion de la position des kirbies et des pieces (qui flottent en l'air)
+      for(unsigned int k = 0; k < kirbies.size(); k++)
+      {
+        kirbies[k].update_position();
+      }
 
-        // Quand le joueur depasse la ligne d'arrivee, on enclenche le process de fin de partie..
-        if(camera->getPosition().X >= 8080)
-          player_state.set_game_state(finishing_run);
+      for(unsigned int k = 0; k < coins.size(); k++)
+      {
+        coins[k].update_position();
+      }
 
-        // Reglage caméra afin qu'elle suive le joueur en X et en Y
-        camera_position = camera->getPosition();
-        camera_target   = camera->getTarget();
-        position        = node->getPosition();
+      // Calcul du saut :
+      jump.update_jump();
 
-        if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
-        {
-          camera_position.X = position.X + 165;
-          camera_target.X = position.X + 165;
-        }
-        else if(position.X > camera_position.X && camera_position.X < 8080.0f)
-        {
-          camera_position.X = position.X;
-          camera_target.X   = position.X;  
-        }
+      // Contrôle clavier :
+      receiver.compute_keyboard();
 
-        if(node->getPosition().Y - camera_position.Y  > 70)
-        {
-          camera_position.Y = position.Y - 70;
-          camera_target.Y = position.Y - 70;
-        }
+      // MaJ de la camera :
+      receiver.compute_camera();
 
-        if(camera->getPosition().Y > 50)
-        {
-          camera_position.Y = position.Y - 70;
-          camera_target.Y = position.Y - 70;
-        }
+      // Calcul de la collision :
+      collision.compute_collision(); 
 
-        //Effet ed style de camera en debut de partie
-        if(position.X < 250)
-        {
-          camera_position.Y = position.Y + 350 - position.X;
-        }
-        
-        if(position.X >= 250 && position.X < 260)
-        {
-          camera_position.Y = position.Y + 50;
-          camera_target.Y = position.Y + 50;
-        }
+      //Calcul du score :
+      player_state.compute_score();
 
-        camera->setPosition(camera_position);
-        camera->setTarget(camera_target);
-
-        // Gestion de la position des kirbies et des pieces (qui flottent en l'air)
-        for(unsigned int k = 0; k < kirbies.size(); k++)
-        {
-          kirbies[k].update_position();
-        }
-
-        for(unsigned int k = 0; k < coins.size(); k++)
-        {
-          coins[k].update_position();
-        }
-
-        // Calcul du saut :
-        jump.update_jump();
-
-        // Contrôle clavier :
-        receiver.compute_keyboard();
-
-        // Calcul de la collision :
-        collision.compute_collision(); 
-
-        //Calcul du score :
-        player_state.compute_score();
-
-        if(node->getPosition().X < -30)
-          node->setPosition(ic::vector3df(-30, node->getPosition().Y, node->getPosition().Z));
+      if(node->getPosition().X < -30)
+        node->setPosition(ic::vector3df(-30, node->getPosition().Y, node->getPosition().Z));
       break;
       case game_is_over:
-        // On attend une petite duree (animation de mort)
-        if(player_state.get_timer() < 60)
-        {
-          player_state.increase_timer();
-        }
-        else //Puis on affiche l'ecran de fin de partie
-        {
-          if(level_creator.get_level_state())
-            level_creator.remove_level();
-          //Image de Game Over
-          ig::IGUIImage *game_over   = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
-          game_over->setScaleImage(true);
-          game_over->setImage(driver->getTexture("data/gameover.png"));
-
-          // Score final
-          ig::IGUIImage *final_score_1000  = gui->addImage(ic::rect<s32>(258,390,  289,427)); final_score_1000->setScaleImage(true);
-          ig::IGUIImage *final_score_100   = gui->addImage(ic::rect<s32>(289,390,  320,427)); final_score_100->setScaleImage(true);
-          ig::IGUIImage *final_score_10    = gui->addImage(ic::rect<s32>(320,390, 351,427)); final_score_10->setScaleImage(true);
-          ig::IGUIImage *final_score_1     = gui->addImage(ic::rect<s32>(351,390, 383 ,427)); final_score_1->setScaleImage(true);
-
-          score = player_state.get_score();
-
-          // Mise à jour du score final :
-          final_score_1000->setImage(digits[(score / 1000) % 10]);
-          final_score_100->setImage(digits[(score / 100) % 10]);
-          final_score_10->setImage(digits[(score / 10) % 10]);
-          final_score_1->setImage(digits[(score / 1) % 10]);
-
-          // Nombre de pieces collectees
-          ig::IGUIImage *nb_coins_100   = gui->addImage(ic::rect<s32>(70,115,  101,152)); nb_coins_100->setScaleImage(true);
-          ig::IGUIImage *nb_coins_10    = gui->addImage(ic::rect<s32>(101,115, 132,152)); nb_coins_10->setScaleImage(true);
-          ig::IGUIImage *nb_coins_1     = gui->addImage(ic::rect<s32>(132,115, 163 ,152)); nb_coins_1->setScaleImage(true);
-
-          int collected_coins = player_state.get_coins();
-
-          nb_coins_100->setImage(digits[(collected_coins / 100) % 10]);
-          nb_coins_10->setImage(digits[(collected_coins / 10) % 10]);
-          nb_coins_1->setImage(digits[(collected_coins / 1) % 10]);
-
-          // Nombre de Kirbies tues
-          ig::IGUIImage *nb_kirbies_10    = gui->addImage(ic::rect<s32>(470,115, 501,152)); nb_kirbies_10->setScaleImage(true);
-          ig::IGUIImage *nb_kirbies_1     = gui->addImage(ic::rect<s32>(501,115, 532 ,152)); nb_kirbies_1->setScaleImage(true);
-
-          int killed_kirbies = player_state.get_kirbies();
-
-          nb_kirbies_10->setImage(digits[(killed_kirbies / 10) % 10]);
-          nb_kirbies_1->setImage(digits[(killed_kirbies / 1) % 10]);
-        }
+      // On attend une petite duree (animation de mort)
+      if(player_state.get_timer() < 60)
+      {
+        player_state.increase_timer();
+      }
+      else //Puis on affiche l'ecran de fin de partie
+      {
+        if(level_creator.get_level_state())
+          level_creator.remove_level();
+       
+      }
       break;
       case finishing_run:
-        position = node->getPosition();
-        node->setPosition(ic::vector3df(position.X + 5, position.Y, position.Z));
-        if(position.X > 8300)
-          player_state.game_over();
+      position = node->getPosition();
+      node->setPosition(ic::vector3df(position.X + 5, position.Y, position.Z));
+      if(position.X > 8300)
+        player_state.game_over();
       break;
       default:
       break;
     }
 
-    // Récupération du score :
-    score = player_state.get_score();
-    // Mise à jour du score :
-    score_1000->setImage(digits[(score / 1000) % 10]);
-    score_100->setImage(digits[(score / 100) % 10]);
-    score_10->setImage(digits[(score / 10) % 10]);
-    score_1->setImage(digits[(score / 1) % 10]);
-
+    gui_display.compute_gui();
     driver->beginScene(true, true, iv::SColor(0,50,100,255));
-
-
 
     // Dessin de la scène :
     smgr->drawAll();
