@@ -20,15 +20,6 @@ Player::Player()
 {
 }
 
-
-/**************************************************************************\
- * Player::set_smgr                                                *
-\**************************************************************************/
-void Player::set_smgr(irr::scene::ISceneManager *s)
-{
-  smgr = s;
-}
-
 /**************************************************************************\
  * Player::init                                                *
 \**************************************************************************/
@@ -57,14 +48,6 @@ is::IAnimatedMeshSceneNode* Player::init(ic::vector3df position)
 Kirbies::Kirbies()
   : smgr(nullptr), kirby_node(nullptr), falling(false), isAlive(true)
 {
-}
-
-/**************************************************************************\
- * Kirbies::set_smgr                                                *
-\**************************************************************************/
-void Kirbies::set_smgr(irr::scene::ISceneManager *s)
-{
-  smgr = s;
 }
 
 /**************************************************************************\
@@ -161,14 +144,6 @@ void Kirbies::remove_node()
 Coins::Coins()
   : smgr(nullptr), coin_node(nullptr), falling(false), isLooted(false), isBeingLooted(false), coin_speed(0)
 {
-}
-
-/**************************************************************************\
- * Coins::set_smgr                                                *
-\**************************************************************************/
-void Coins::set_smgr(irr::scene::ISceneManager *s)
-{
-  smgr = s;
 }
 
 /**************************************************************************\

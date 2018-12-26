@@ -14,7 +14,7 @@ class Player
 
 public:
   Player();
-  void set_smgr(irr::scene::ISceneManager *smgr);
+  void set_smgr(irr::scene::ISceneManager *s){smgr=s;}
   irr::scene::IAnimatedMeshSceneNode* init(irr::core::vector3df position);
 };
 
@@ -29,8 +29,11 @@ class Kirbies
 
 public:
   Kirbies();
-  void set_smgr(irr::scene::ISceneManager *smgr);
+
+  void set_smgr(irr::scene::ISceneManager *s){smgr=s;}
+
   bool get_isAlive();
+
   void init(irr::core::vector3df pos, int id);
   void update_position();
   void kill();
@@ -51,9 +54,11 @@ class Coins
 
 public:
   Coins();
-  void set_smgr(irr::scene::ISceneManager *smgr);
+  void set_smgr(irr::scene::ISceneManager *s){smgr=s;}
+
   bool get_isLooted();
   bool get_isBeingLooted();
+  
   void init(irr::core::vector3df pos, int id);
   void update_position();
   void loot();

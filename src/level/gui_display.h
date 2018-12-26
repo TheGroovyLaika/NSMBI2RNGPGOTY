@@ -27,10 +27,10 @@ class Gui_display
 
 public:
 	Gui_display();
-	void set_smgr(irr::scene::ISceneManager *smgr);
-	void set_gui(irr::gui::IGUIEnvironment *gui);
-	void set_driver(irr::video::IVideoDriver *driver);
-	void set_player_state(Player_state *player_state);
+	void set_smgr(irr::scene::ISceneManager *s){smgr = s;}
+	void set_gui(irr::gui::IGUIEnvironment *g){gui = g;}
+	void set_driver(irr::video::IVideoDriver *d){driver = d;}
+	void set_player_state(Player_state *p_s){player_state = p_s;}
 	void init();
   	void compute_gui();
 };

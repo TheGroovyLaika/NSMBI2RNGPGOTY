@@ -23,10 +23,12 @@ class Level_Creator
 
 public:
 	Level_Creator();
-	void set_smgr(irr::scene::ISceneManager *s);
-	void set_driver(irr::video::IVideoDriver *d);
-	void set_coins(std::vector<Coins> *coins);
-	void set_kirbies(std::vector<Kirbies> *kirbies);
+
+	void set_smgr(irr::scene::ISceneManager *s){smgr=s;}
+	void set_driver(irr::video::IVideoDriver *d){driver=d;}
+	void set_coins(std::vector<Coins> *c){coins=c;}
+	void set_kirbies(std::vector<Kirbies> *k){kirbies=k;}
+
 	bool get_level_state();
 	void load_level(int position_nb[], std::vector<irr::core::vector3df> position_data);
 	void load_background();

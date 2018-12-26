@@ -116,38 +116,6 @@ Level_Creator::Level_Creator()
 {
 }
 
-/**************************************************************************\
- * Level_Creator::set_smgr                                           *
-\**************************************************************************/
-void Level_Creator::set_smgr(irr::scene::ISceneManager *s)
-{
-	smgr = s;
-}
-
-/**************************************************************************\
- * Level_Creator::set_driver                                           *
-\**************************************************************************/
-void Level_Creator::set_driver(irr::video::IVideoDriver *d)
-{
-	driver = d;
-}
-
-/**************************************************************************\
- * Level_Creator::set_coins                                           *
-\**************************************************************************/
-void Level_Creator::set_coins(std::vector<Coins> *c)
-{
-	coins = c;
-}
-
-/**************************************************************************\
- * Level_Creator::set_kirbies                                           *
-\**************************************************************************/
-void Level_Creator::set_kirbies(std::vector<Kirbies> *k)
-{
-	kirbies = k;
-}
-
 bool Level_Creator::get_level_state()
 {
   return levelIsMade;

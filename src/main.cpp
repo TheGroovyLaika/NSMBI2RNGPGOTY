@@ -23,8 +23,6 @@ namespace ig = irr::gui;
 
 int main()
 {
-  bool hasGameSartedYet = false; //Booleen verifiant si la partie 
-
   // Le gestionnaire d'événements
   EventReceiver receiver = EventReceiver();
 
@@ -151,8 +149,6 @@ int main()
   smgr->setAmbientLight(iv::SColor(0,255,255,255));
 
   light->getLightData().SpecularColor = iv::SColorf(1.0f, 1.0f, 0.0, 0.0);
-
-  int score = 0;
 
   while(device->run())
   {

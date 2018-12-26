@@ -30,12 +30,14 @@ class EventReceiver : public irr::IEventReceiver
 public:
   EventReceiver();
   bool OnEvent(const irr::SEvent &event);
-  void set_node(irr::scene::IAnimatedMeshSceneNode *node);
-  void set_camera(irr::scene::ICameraSceneNode *camera);
+
+  void set_node(irr::scene::IAnimatedMeshSceneNode *n){node=n;}
+  void set_camera(irr::scene::ICameraSceneNode *c){camera=c;}
   void set_textures(const std::vector<irr::video::ITexture *> &tex){textures=tex;}
-  void set_jump(Jump *jump);
-  void set_collision(Collision *collision);
-  void set_player_state(Player_state *player_state);
+  void set_jump(Jump *j){jump=j;}
+  void set_collision(Collision *c){collision=c;}
+  void set_player_state(Player_state *p_s){player_state=p_s;}
+
   void compute_keyboard();
   void compute_camera();
 };

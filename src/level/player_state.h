@@ -30,7 +30,7 @@ public:
   bool get_godmode();
   int get_timer();
 
-  void set_node(irr::scene::IAnimatedMeshSceneNode *node);
+  void set_node(irr::scene::IAnimatedMeshSceneNode *n){node=n;}
   void set_textures(const std::vector<irr::video::ITexture *> &tex){textures=tex;}
   void set_game_state(Game_state g_s){game_state=g_s;}
 

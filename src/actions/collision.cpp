@@ -19,86 +19,12 @@ Collision::Collision()
 {
 }
 
-
-/**************************************************************************\
- * Collision::set_node                                                *
-\**************************************************************************/
-void Collision::set_node(irr::scene::IAnimatedMeshSceneNode *n)
-{
-  node = n;
-  mesh_size = node->getTransformedBoundingBox().MaxEdge.Y - node->getTransformedBoundingBox().MinEdge.Y;
-}
-
-/**************************************************************************\
- * Collision::set_smgr                                                *
-\**************************************************************************/
-void Collision::set_smgr(is::ISceneManager *s)
-{
-  smgr = s;
-}
-
-/**************************************************************************\
- * Collision::set_jump                                                *
-\**************************************************************************/
-void Collision::set_jump(Jump *j)
-{
-  jump = j;
-}
-
-
-/**************************************************************************\
- * Collision::set_walking                                                *
-\**************************************************************************/
-void Collision::set_walking(bool iw)
-{
-  isWalking = iw;
-}
-
-/**************************************************************************\
- * Collision::set_kirbies_number                                                *
-\**************************************************************************/
-void Collision::set_kirbies_number(int k)
-{
-  nb_kirbies = k;
-}
-
-/**************************************************************************\
- * Collision::set_kirbies                                               *
-\**************************************************************************/
-void Collision::set_kirbies(std::vector<Kirbies> *k)
-{
-  kirbies = k;
-}
-
-/**************************************************************************\
- * Collision::set_coins_number                                                *
-\**************************************************************************/
-void Collision::set_coins_number(int c)
-{
-  nb_coins = c;
-}
-
-/**************************************************************************\
- * Collision::set_coins                                               *
-\**************************************************************************/
-void Collision::set_coins(std::vector<Coins> *c)
-{
-  coins = c;
-}
-
-/**************************************************************************\
- * Collision::set_player_state                                               *
-\**************************************************************************/
-void Collision::set_player_state(Player_state *ps)
-{
-  player_state = ps;
-}
-
 /**************************************************************************\
  * Collision::compute_collision                                                *
 \**************************************************************************/
 void Collision::compute_collision()
 {
+  mesh_size = node->getTransformedBoundingBox().MaxEdge.Y - node->getTransformedBoundingBox().MinEdge.Y;
   //Collision avec les plateformes
   ic::array< irr::scene::ISceneNode * > all_cubes;
   smgr->getSceneNodesFromType(irr::scene::ESNT_CUBE, all_cubes);

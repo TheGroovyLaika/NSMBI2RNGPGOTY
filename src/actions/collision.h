@@ -29,15 +29,16 @@ class Collision
   
 public:
   Collision();
-  void set_node(irr::scene::IAnimatedMeshSceneNode *node);
-  void set_smgr(irr::scene::ISceneManager *smgr);
-  void set_jump(Jump *jump);
-  void set_kirbies(std::vector<Kirbies> *kirbies);
-  void set_coins(std::vector<Coins> *coins);
-  void set_player_state(Player_state *player_state);
-  void set_walking(bool isWalking);
-  void set_kirbies_number(int nb_kirbies);
-  void set_coins_number(int nb_coins);
+  void set_node(irr::scene::IAnimatedMeshSceneNode *n){node=n;}
+  void set_smgr(irr::scene::ISceneManager *s){smgr=s;}
+  void set_jump(Jump *j){jump=j;}
+  void set_kirbies(std::vector<Kirbies> *k){kirbies=k;}
+  void set_coins(std::vector<Coins> *c){coins=c;}
+  void set_player_state(Player_state *p_s){player_state=p_s;}
+  void set_walking(bool iW){isWalking=iW;}
+  void set_kirbies_number(int n_k){nb_kirbies=n_k;}
+  void set_coins_number(int n_c){nb_coins=n_c;}
+
   void compute_collision();
 };
 
