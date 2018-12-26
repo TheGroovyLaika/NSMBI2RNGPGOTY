@@ -24,6 +24,7 @@ class Gui_display
  	irr::video::ITexture *digits[10];
 	irr::gui::IGUIImage *start_game_screen;
 	irr::gui::IGUIImage *game_over_screen;
+	irr::gui::IGUIImage *end_level_screen;
 
 public:
 	Gui_display();

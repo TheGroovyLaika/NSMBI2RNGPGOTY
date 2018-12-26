@@ -194,14 +194,13 @@ int main()
       {
         if(level_creator.get_level_state())
           level_creator.remove_level();
-       
       }
       break;
       case finishing_run:
       position = node->getPosition();
       node->setPosition(ic::vector3df(position.X + 5, position.Y, position.Z));
       if(position.X > 8300)
-        player_state.game_over();
+        player_state.next_level();
       break;
       default:
       break;

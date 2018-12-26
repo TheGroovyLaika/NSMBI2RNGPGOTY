@@ -129,8 +129,8 @@ void Gui_display::compute_gui()
 		{
 			if(token != e_s)
 			{
-				game_over_screen = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
-				game_over_screen->setScaleImage(true);
+				end_level_screen = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
+				end_level_screen->setScaleImage(true);
 				
 				final_score_gui.push_back(gui->addImage(ic::rect<s32>(258,390,  289,427)));
 				final_score_gui.back()->setScaleImage(true);
@@ -152,7 +152,7 @@ void Gui_display::compute_gui()
 				nb_kirbies.back()->setScaleImage(true);
 				nb_kirbies.push_back(gui->addImage(ic::rect<s32>(501,115, 532 ,152)));
 				nb_kirbies.back()->setScaleImage(true);
-				game_over_screen->setImage(driver->getTexture("data/gameover.png"));
+				end_level_screen->setImage(driver->getTexture("data/endlevel.png"));
 				int score = player_state->get_score();
 		
 				final_score_gui[0]->setImage(digits[(score / 1000) % 10]);

@@ -41,6 +41,7 @@ public:
   void increase_timer();
   void godmode();
   void game_over();
+  void next_level();
 };
 
 #endif

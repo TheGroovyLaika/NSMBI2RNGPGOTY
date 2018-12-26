@@ -109,7 +109,7 @@ void EventReceiver::compute_keyboard()
             if(lateral_speed < 0  )
               lateral_speed = 0; 
 
-            if(lateral_speed < 5 )
+            if(lateral_speed < 50 )
               lateral_speed += 0.2; //augmentation progressive de la vitesse
 
             if(!jump->get_jumping() || jump->get_collision())
@@ -179,6 +179,7 @@ void EventReceiver::compute_camera()
   ic::vector3df camera_position = camera->getPosition();
   ic::vector3df camera_target   = camera->getTarget();
   ic::vector3df position        = node->getPosition();
+  std::cout<<"Y Position : "<<position.Y<<std::endl;  
 
   if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
   {

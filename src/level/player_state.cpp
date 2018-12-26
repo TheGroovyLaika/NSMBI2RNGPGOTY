@@ -145,3 +145,15 @@ void Player_state::game_over()
   		node->setMaterialTexture(0, textures[1]);
 	}
 }
+
+/**************************************************************************\
+ * Player_state::next_level                                           *
+\**************************************************************************/
+void Player_state::next_level()
+{
+	//Le personnage meurt
+	if(game_state == finishing_run)
+	{
+		game_state = end_screen;
+	}
+}
