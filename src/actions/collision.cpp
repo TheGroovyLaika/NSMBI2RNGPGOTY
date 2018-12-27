@@ -43,10 +43,10 @@ void Collision::compute_collision()
         {
           if(player_state->get_character_state() == jumping)
           {
-            node->setPosition(ic::vector3df(node->getPosition().X, cubeBox.MaxEdge.Y + mesh_size/2 - 2, node->getPosition().Z));
+            node->setPosition(ic::vector3df(node->getPosition().X, cubeBox.MaxEdge.Y + mesh_size/2 - 1, node->getPosition().Z));
             player_state->set_character_state(standing);
             node->setMD2Animation(is::EMAT_STAND);
-
+            jump->set_lateral_speed(0);
             jump->set_speed(-0.0000001);
             jump->reset_jumps();
           }

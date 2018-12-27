@@ -5,8 +5,10 @@
 
 #include <vector>
 
+
+#include <iostream>
 #include <irrlicht.h>
-enum Game_state { start_screen, in_game, game_is_over,finishing_run, end_screen };
+enum Game_state { start_screen, in_game, paused, game_is_over,finishing_run, end_screen };
 enum Character_state {standing, walking, jumping};
 
 class Player_state

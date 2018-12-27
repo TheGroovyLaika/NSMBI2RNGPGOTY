@@ -7,7 +7,7 @@
 
 #include <irrlicht.h>
 #include "player_state.h"
-enum Token { s_s, i_g, g_i_o, f_r, e_s };
+enum Token { s_s, p, i_g, g_i_o, f_r, e_s };
 
 class Gui_display
 {
@@ -25,6 +25,7 @@ class Gui_display
 	irr::gui::IGUIImage *start_game_screen;
 	irr::gui::IGUIImage *game_over_screen;
 	irr::gui::IGUIImage *end_level_screen;
+	irr::gui::IGUIImage *pause_gui;
 
 public:
 	Gui_display();

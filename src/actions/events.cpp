@@ -36,14 +36,23 @@ bool EventReceiver::keyboard(const SEvent &event)
       {
         case KEY_ESCAPE: //Quitter le jeu
           exit(0);
-	  break;
+        break;
+
         case KEY_KEY_Z: // Saute
           if (player_state->get_game_state() == in_game)
             jump->jump();
-	  break;
+        break;
+
       	case KEY_KEY_M: //Godmode
-      	  player_state->godmode();
-          break;
+    	  player_state->godmode();
+        break;
+
+        case KEY_KEY_P:
+        if(player_state->get_game_state() == in_game)
+          player_state->set_game_state(paused);
+        else if(player_state->get_game_state()==paused)
+          player_state->set_game_state(in_game);
+        break;
 
         default:;
       }

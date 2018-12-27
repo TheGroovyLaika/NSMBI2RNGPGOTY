@@ -71,7 +71,7 @@ int main()
   Player player = Player();
   
   // Chargement de notre personnage
-  ic::vector3df position  = ic::vector3df(-30, 0, 0);
+  ic::vector3df position  = ic::vector3df(-30, 0, 5);
 
   // Attachement de notre personnage dans la scène
   textures.push_back(driver->getTexture("data/blue_texture.pcx"));

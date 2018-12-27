@@ -48,6 +48,10 @@ void Gui_display::init()
   	start_game_screen = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
   	start_game_screen->setScaleImage(true);
 	start_game_screen->setImage(driver->getTexture("data/start_game.png"));
+
+	pause_gui = gui->addImage(ic::rect<s32>(0,0, 640,480)); 
+  	pause_gui->setScaleImage(true);
+	pause_gui->setImage(driver->getTexture("data/unpause.png"));
 }
 
 /**************************************************************************\
@@ -61,7 +65,12 @@ void Gui_display::compute_gui()
 		break;
 		case in_game:
 		{
-			if(token != i_g)
+			if(token == p)
+			{
+				pause_gui->setImage(driver->getTexture("data/unpause.png"));
+				token = i_g;
+			}
+			if(token == s_s)
 			{
 				start_game_screen->remove();
 				token = i_g;
@@ -73,6 +82,16 @@ void Gui_display::compute_gui()
 		    score_gui[1]->setImage(digits[(score / 100) % 10]);
 		    score_gui[2]->setImage(digits[(score / 10) % 10]);
 		    score_gui[3]->setImage(digits[(score / 1) % 10]);
+		}
+		break;
+		case paused:
+		{
+			if(token == i_g)
+			{
+				token = p;
+				pause_gui->setImage(driver->getTexture("data/pause.png"));
+			}
+
 		}
 		break;
 		case game_is_over:
