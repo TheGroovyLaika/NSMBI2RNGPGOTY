@@ -58,13 +58,13 @@ void Gui_display::compute_gui()
 	switch(player_state->get_game_state())
 	{
 		case start_screen:
-		std::cout<<""<<std::endl;
 		break;
 		case in_game:
 		{
 			if(token != i_g)
 			{
 				start_game_screen->remove();
+				token = i_g;
 			}
 			// Récupération du score :
 		    int score = player_state->get_score();

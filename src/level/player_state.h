@@ -6,7 +6,8 @@
 #include <vector>
 
 #include <irrlicht.h>
- enum Game_state { start_screen, in_game, game_is_over,finishing_run, end_screen };
+enum Game_state { start_screen, in_game, game_is_over,finishing_run, end_screen };
+enum Character_state {standing, walking, jumping};
 
 class Player_state
 {
@@ -17,6 +18,7 @@ class Player_state
   int looted_coin;
   int dead_kirbies;
   Game_state game_state;
+  Character_state character_state;
   bool godMode;
   int timer;
 
@@ -24,6 +26,7 @@ public:
   Player_state();
 
   Game_state get_game_state();
+  Character_state get_character_state();
   int get_score();
   int get_coins();
   int get_kirbies();
@@ -33,6 +36,7 @@ public:
   void set_node(irr::scene::IAnimatedMeshSceneNode *n){node=n;}
   void set_textures(const std::vector<irr::video::ITexture *> &tex){textures=tex;}
   void set_game_state(Game_state g_s){game_state=g_s;}
+  void set_character_state(Character_state c_s){character_state=c_s;}
 
   void compute_score();
   void add_score(int added_score);

@@ -15,7 +15,7 @@ namespace iv = irr::video;
  * EventReceiver::EventReceiver                                           *
 \**************************************************************************/
 EventReceiver::EventReceiver()
-  : node(nullptr), camera(nullptr), textures(), key_code(KEY_PLAY), jump(nullptr), collision(nullptr), button_pressed(false), lateral_speed(0), current_texture(0), isWalking(false), key_pressed_down(false), player_state(nullptr)
+  : node(nullptr), camera(nullptr), textures(), key_code(KEY_PLAY), jump(nullptr), lateral_speed(0), current_texture(0), key_pressed_down(false), player_state(nullptr)
 {
 }
 
@@ -53,12 +53,11 @@ bool EventReceiver::keyboard(const SEvent &event)
     // Gestion de l'animation "debout" lorsque le joueur n'appuie pas sur une touche
     if(event.EventType == EET_KEY_INPUT_EVENT &&
           !event.KeyInput.PressedDown && player_state->get_game_state() == in_game)
-    {        
-        isWalking = false;
-        collision->set_walking(false);
-        if(!jump->get_jumping())
+    {  
+          if(player_state->get_character_state() != jumping)
         {
           jump->set_lateral_speed(0);
+          player_state->set_character_state(standing);
           node->setMD2Animation(is::EMAT_STAND);
         }
     }
@@ -109,25 +108,18 @@ void EventReceiver::compute_keyboard()
             if(lateral_speed < 0  )
               lateral_speed = 0; 
 
-            if(lateral_speed < 50 )
+            if(lateral_speed < 5 )
               lateral_speed += 0.2; //augmentation progressive de la vitesse
 
-            if(!jump->get_jumping() || jump->get_collision())
+            if(player_state->get_character_state() != jumping)
               position.X += lateral_speed;
 
             jump->set_lateral_speed(lateral_speed);
 
-            if(!isWalking){
-              if(!jump->get_jumping())
-              {
-                node->setMD2Animation(is::EMAT_RUN); // Animation de course si le personnage ne saute pas ou n'est pas deja en course
-              }
-              if(jump->get_speed()>-0.2f)
-              {
-                // Si le personnage ne tombe pas, c'est qu'il est sur le plateforme
-                collision->set_walking(true);
-                isWalking = true;
-              }
+            if(player_state->get_character_state() == standing)
+            {
+              player_state->set_character_state(walking);
+              node->setMD2Animation(is::EMAT_RUN); // Animation de course si le personnage ne saute pas ou n'est pas deja en course
             }
             rotation.Y = 0;
             node->setPosition(position);
@@ -143,19 +135,15 @@ void EventReceiver::compute_keyboard()
             if(lateral_speed > -5  )
               lateral_speed -= 0.2;
 
-            if(!jump->get_jumping() || jump->get_collision())
+            if(player_state->get_character_state() != jumping)
                 position.X += lateral_speed;
             jump->set_lateral_speed(lateral_speed);
 
-            if(!isWalking){
-              if(!jump->get_jumping())
-                    node->setMD2Animation(is::EMAT_RUN);
-              if(jump->get_speed()>-0.2f)
-              {
-                collision->set_walking(true);
-                isWalking = true;
-              }
-            }
+            if(player_state->get_character_state() == standing)
+            {
+              player_state->set_character_state(walking);
+              node->setMD2Animation(is::EMAT_RUN); // Animation de course si le personnage ne saute pas ou n'est pas deja en course
+            } 
             rotation.Y = 180 ;
             node->setPosition(position);
           }
@@ -179,7 +167,6 @@ void EventReceiver::compute_camera()
   ic::vector3df camera_position = camera->getPosition();
   ic::vector3df camera_target   = camera->getTarget();
   ic::vector3df position        = node->getPosition();
-  std::cout<<"Y Position : "<<position.Y<<std::endl;  
 
   if(camera_position.X - position.X > 165 && camera_position.X < 8080.0f)
   {

@@ -24,8 +24,6 @@ void Level_Creator::create_platform(irr::core::vector3df position, int mesh_id, 
   cube_node->setID(mesh_id);
   cube_node->setMaterialTexture(0, texture);
 	cube_node->getMaterial(0).setTextureMatrix(0,texture_mat);
-
-  std::cout<<"---- ID : "<<mesh_id<<std::endl;
 }
 
 /**************************************************************************\
@@ -233,6 +231,18 @@ void Level_Creator::load_background()
     tree_nodes[i]->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
     tree_nodes[i]->setPosition(ic::vector3df(i*200, 20, rand()%300 + 200));
   }
+
+  //Generation du sol
+  irr::core::matrix4 mat;
+  mat.setTextureScale(50.0F,150.0F);
+
+  irr::scene::ISceneNode* ground = smgr->addCubeSceneNode(30);
+  ground->setScale(ic::vector3df(320.0f, 2.0f,50.0f));
+  ground->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+  ground->setMaterialTexture( 0, driver->getTexture("data/grass.jpg") );
+  ground->getMaterial(0).setTextureMatrix(0,mat);
+  ground->setPosition(ic::vector3df(4000.0f, -65.0f, 20.0f));
+  ground->getMaterial(0).Shininess = 20.0f;
 }
 
 /**************************************************************************\
@@ -242,20 +252,17 @@ void Level_Creator::remove_level()
 {
   for(int mesh_id = 5 + nb_coins + nb_kirbies; mesh_id < 5 + nb_coins + nb_kirbies + nb_platforms; mesh_id++)
   {
-    std::cout<<"Removing platform ---- ID : "<<mesh_id<<std::endl;
     smgr->getSceneNodeFromId(mesh_id)->remove();
   }
 
   while(!(*coins).empty())
   {
-    std::cout<<"Removing coins ---- size : "<<(*coins).size()<<std::endl;
     (*coins).back().remove_node();
     (*coins).pop_back();
   }
 
   while(!(*kirbies).empty())
   {
-    std::cout<<"Removing kirbies ---- size : "<<(*kirbies).size()<<std::endl;
     (*kirbies).back().remove_node();
     (*kirbies).pop_back();
   }

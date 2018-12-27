@@ -29,6 +29,14 @@ Game_state Player_state::get_game_state()
 }
 
 /**************************************************************************\
+ * Player_state::get_character_state                                           *
+\**************************************************************************/
+Character_state Player_state::get_character_state()
+{
+	return character_state;
+}
+
+/**************************************************************************\
  * Player_state::get_score                                           *
 \**************************************************************************/
 int Player_state::get_score()

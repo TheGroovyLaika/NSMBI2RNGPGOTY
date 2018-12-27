@@ -91,13 +91,13 @@ int main()
   receiver.set_node(node);
   receiver.set_textures(textures);
   receiver.set_jump(&jump);
-  receiver.set_collision(&collision);
   receiver.set_camera(camera);
   receiver.set_player_state(&player_state);
   
   // Initialisation de la classe jump
   jump.set_node(node);
   jump.set_camera(camera);
+  jump.set_player_state(&player_state);
   
   // Initialisation de la classe collision
   collision.set_node(node);
@@ -128,27 +128,8 @@ int main()
   player_state.set_node(node);
   player_state.set_textures(textures);
 
-  
-  //Generation du sol
-  irr::core::matrix4 mat;
-  mat.setTextureScale(50.0F,150.0F);
-
-  irr::scene::ISceneNode* ground = smgr->addCubeSceneNode(30);
-  ground->setScale(ic::vector3df(320.0f, 2.0f,50.0f));
-  ground->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-  ground->setMaterialTexture( 0, driver->getTexture("data/grass.jpg") );
-  ground->getMaterial(0).setTextureMatrix(0,mat);
-  ground->setPosition(ic::vector3df(4000.0f, -65.0f, 20.0f));
-  ground->getMaterial(0).Shininess = 20.0f;
-  //lightnode = is::ILightSceneNode(nullptr, smgr, 0, ic::vector3df(0, 0, 0));
-  irr::scene:: ILightSceneNode* light = smgr->addLightSceneNode(nullptr,ic::vector3df(),iv::SColorf(1.0f, 1.0f, 0.6f, 1.0f),1000.0f,0);
-  light->setPosition(ic::vector3df(0, 60, -100));
-  light->getLightData().DiffuseColor = iv::SColorf(1.0f, 1.0f, 0.6f, 0.0);
-
   // set ambient light
   smgr->setAmbientLight(iv::SColor(0,255,255,255));
-
-  light->getLightData().SpecularColor = iv::SColorf(1.0f, 1.0f, 0.0, 0.0);
 
   while(device->run())
   {

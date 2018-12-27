@@ -15,29 +15,8 @@ namespace iv = irr::video;
  * Jump::Jump                                           *
 \**************************************************************************/
 Jump::Jump()
-  : node(nullptr), camera(nullptr), speed(0), lateral_speed(0), isJumping(false), isCollisioning(false), isDoubleJumping(false)
+  : node(nullptr), camera(nullptr), player_state(nullptr), speed(0), lateral_speed(0), jump_counts(0)
 {
-}
-
-/**************************************************************************\
- * Jump::set_speed                                                *
-\**************************************************************************/
-void Jump::set_speed(float s)
-{
-  if(!isDoubleJumping)
-    speed = s;
-  if(speed > 0 && isJumping && !isCollisioning)
-    isDoubleJumping = true;
-}
-
-/**************************************************************************\
- * Jump::set_collision                                                *
-\**************************************************************************/
-void Jump::set_collision(bool c)
-{
-  isCollisioning = c;
-  if(c)
-    isDoubleJumping = false;
 }
 
 /**************************************************************************\
@@ -47,16 +26,12 @@ void Jump::set_collision(bool c)
 \**************************************************************************/
 void Jump::jump()
 {
-
-  if(!isDoubleJumping)
+  if(jump_counts < 2)
   {
+    jump_counts++;
+    player_state->set_character_state(jumping);
     node->setMD2Animation(is::EMAT_JUMP);
     speed = 90.0f;
-    if(!isJumping || isCollisioning)
-      isJumping = true;
-    else
-      isDoubleJumping = true;
-    isCollisioning = false;
   }
 }
 
@@ -77,32 +52,6 @@ float Jump::get_lateral_speed()
   return lateral_speed;
 }
 
-
-/**************************************************************************\
- * Jump::get_collision                                                *
-\**************************************************************************/
-bool Jump::get_collision()
-{
-  return isCollisioning;
-}
-
-/**************************************************************************\
- * Jump::get_jumping                                                *
-\**************************************************************************/
-bool Jump::get_jumping()
-{
-  return isJumping;
-}
-
-
-/**************************************************************************\
- * Jump::get_double_jumping                                                *
-\**************************************************************************/
-bool Jump::get_double_jumping()
-{
-  return isDoubleJumping;
-}
-
 /**************************************************************************\
  * Jump::jumping_calculation                                                *
 \**************************************************************************/
@@ -112,17 +61,19 @@ void Jump::update_jump()
   float position_Y = node->getPosition().Y;
   float position_X = node->getPosition().X;
 
-  if(isJumping && !isCollisioning)
+  if(player_state->get_character_state() == jumping)
   {
     speed -= 35*9.8*0.01;
     if(speed < -70)
       speed = -70;
     position_Y += speed*0.1;
     position_X += lateral_speed;
-  }
-  if(!isCollisioning)
-  {
+
     node->setPosition(ic::vector3df(position_X, position_Y, node->getPosition().Z));
   }
+}
 
+void Jump::reset_jumps()
+{
+  jump_counts = 0;
 }
